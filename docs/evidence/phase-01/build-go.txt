@@ -1,0 +1,6 @@
+mkdir -p bin
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/api ./cmd/api
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/worker ./cmd/worker
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/migrate ./cmd/migrate
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/seed ./cmd/seed
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/healthcheck ./cmd/healthcheck

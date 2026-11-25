@@ -1,0 +1,22 @@
+import { test, expect } from '@playwright/test'
+test('UI đọc backend/database thật và tài liệu API local hoạt động', async ({ page, request }) => {
+  const response = await request.get('/api/v1/foundation')
+  expect(response.ok()).toBeTruthy()
+  const body = await response.json()
+  const evidenceDir = process.env.E2E_EVIDENCE_DIR ?? '../docs/evidence/phase-01'
+  expect(process.env.APP_VERSION).toMatch(/^e2e-/)
+  expect(body.data.version).toBe(process.env.APP_VERSION)
+  await page.goto('/')
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  await expect(page.getByRole('status')).toHaveText('Đã kết nối')
+  await expect(page.getByTestId('store-name')).toHaveText(body.data.store.name)
+  await page.getByRole('button', { name: 'Kiểm tra lại kết nối' }).click()
+  await expect(page.getByRole('status')).toHaveText('Đã kết nối')
+  await page.setViewportSize({ width: 375, height: 812 })
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
+  await page.screenshot({ path: `${evidenceDir}/mobile.png`, fullPage: true })
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await page.screenshot({ path: `${evidenceDir}/desktop.png`, fullPage: true })
+  await page.getByRole('link', { name: 'Tài liệu API' }).click()
+  await expect(page.getByRole('heading', { name: /E-commerce Base API/ })).toBeVisible()
+})

@@ -1,0 +1,153 @@
+# E-commerce Base
+
+Workspace tách rõ hai phần: **WAS là backend Go**, **Viewer là frontend React**. Phase 01 đã có nền tảng và kiểm chứng native; Docker hiện được tạm hoãn theo yêu cầu.
+
+## Cấu trúc
+
+```text
+E-com/
+├── was/                       # Backend
+│   ├── api/                   # OpenAPI và Go embed
+│   ├── cmd/                   # api, worker, migrate, seed, healthcheck
+│   ├── internal/              # config, database, httpserver, runtime
+│   ├── migrations/            # SQL migration có version
+│   ├── tests/integration/     # PostgreSQL integration tests
+│   ├── scripts/               # Runner test backend
+│   ├── bin/                   # Binary build, không commit
+│   ├── go.mod / go.sum
+│   ├── Makefile
+│   └── Dockerfile
+├── viewer/                    # Frontend
+│   ├── src/                   # React, client và component tests
+│   ├── e2e/                   # Playwright
+│   ├── public/api-docs/       # Swagger UI local
+│   ├── scripts/               # Chuẩn bị Swagger assets
+│   ├── package.json / package-lock.json
+│   ├── Dockerfile
+│   └── nginx.conf
+├── docs/                      # Yêu cầu, thiết kế và evidence dùng chung
+├── plans/                     # Plan tổng và 6 phase
+├── scripts/run-e2e.py          # Điều phối WAS + Viewer
+├── Makefile                   # Điều phối workspace
+├── docker-compose.yml
+└── .env.example
+```
+
+Go module chỉ nằm trong `was/`; chạy lệnh Go trực tiếp từ đó. Npm project chỉ nằm trong `viewer/`. Root Makefile hỗ trợ chạy tất cả các lệnh điều phối từ thư mục gốc.
+
+Contract chuẩn: [was/api/openapi.yaml](was/api/openapi.yaml). WAS embed contract vào binary; Viewer sinh `viewer/src/api.generated.ts` từ cùng file, không giữ bản contract thứ hai. Mã nghiệp vụ của hai phần không phụ thuộc chéo vào nhau.
+
+## Chạy native
+
+Công cụ đã dùng: Go 1.27.4, Node 24/npm và PostgreSQL 17.12. Dependency khóa trong `was/go.mod`, `was/go.sum`, `viewer/package-lock.json`.
+
+Tạo database phát triển và user bằng công cụ PostgreSQL của bạn, sau đó:
+
+```bash
+cp .env.example .env
+npm --prefix viewer ci
+```
+
+Sửa `DATABASE_URL` trong `.env` để trỏ đúng PostgreSQL. Khởi tạo và chạy WAS:
+
+```bash
+make migrate-up
+make seed
+make run
+```
+
+Terminal khác chạy Viewer:
+
+```bash
+make viewer-dev
+```
+
+- Viewer: http://localhost:5173
+- API WAS: http://localhost:8080
+- Swagger qua Viewer: http://localhost:5173/api-docs/index.html
+- Health: http://localhost:8080/health/live và /health/ready
+- Contract: http://localhost:8080/openapi.json
+
+Vite proxy API cùng origin đến localhost:8080; dùng `API_PROXY_TARGET` nếu WAS chạy địa chỉ khác. Backend không tự nạp `.env` khi gọi binary trực tiếp; Make/Compose nạp environment. Biến truyền trên command line Make ưu tiên cao hơn `.env`:
+
+```bash
+make DATABASE_URL='postgres://user:password@localhost:5432/ecom?sslmode=disable' migrate-up seed
+```
+
+Có thể thao tác riêng backend:
+
+```bash
+make -C was build
+make -C was test
+make -C was run
+```
+
+Makefile của WAS nạp `../.env`; nếu chạy `go run` trực tiếp thì cần cấp environment. Với Go Snap bị hạn chế wrapper, có thể dùng `make GO=/snap/go/current/bin/go ...` khi binary đó tồn tại.
+
+## Kiểm tra và build ngoài Docker
+
+```bash
+npm --prefix viewer ci
+make check
+make build
+```
+
+- `make check`: Go unit/vet trong WAS, OpenAPI validate/type generation và Viewer lint/typecheck/unit/build.
+- `make build`: binary WAS vào `was/bin/`.
+- `make viewer-check`: chỉ kiểm tra Viewer cùng contract.
+- `make contract`: validate contract và sinh TypeScript từ `was/api/openapi.yaml`.
+- `make format`: format mã Go trong WAS.
+
+Có thể gọi frontend riêng bằng `npm --prefix viewer run ...`. Build/dev tự sinh type và chuẩn bị Swagger assets từ dependency đã khóa, không dùng CDN.
+
+Integration và E2E cần PostgreSQL test thật có tên database kết thúc `_test`:
+
+```bash
+export TEST_DATABASE_URL='postgres://user:password@localhost:5432/ecom_test?sslmode=disable'
+make test-integration
+npm --prefix viewer exec -- playwright install chromium
+make test-e2e
+```
+
+Khi đã truyền `TEST_DATABASE_URL`, runner integration không gọi Docker. Nếu không truyền, runner có chế độ khởi tạo service test bằng Compose; không dùng chế độ này khi đang hoãn kiểm tra Docker.
+
+Integration tạo schema `ecom_it_<random>`, migrate/seed/HTTP/rollback rồi chỉ dọn schema của mình. Không dùng DB test để lưu dữ liệu cần giữ. E2E dùng `was/bin/`, khởi chạy API port 18080 và Vite port 5173, xác minh APP_VERSION riêng để không pass nhầm backend. Đóng Vite dev trước khi chạy E2E. Python 3 được dùng cho runner điều phối. Để lưu riêng evidence và giữ kết quả lịch sử, đặt `E2E_EVIDENCE_DIR=docs/evidence/restructure-was-viewer` khi chạy `make test-e2e`; runner chuẩn hóa đường dẫn và dùng chung cho API log/ảnh browser.
+
+Nếu dùng Chrome sẵn có, đặt `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` bằng đường dẫn binary. Thiếu browser/library phải ghi chưa kiểm chứng, không coi pass. Trace/report ở `viewer/test-results/`, `viewer/playwright-report/` được ignore. Evidence nền tảng ở `docs/evidence/phase-01/`; evidence lần tách cấu trúc ở `docs/evidence/restructure-was-viewer/`.
+
+## Migration và seed
+
+`make migrate-up` dùng golang-migrate đã khóa trong Go module, không cần CLI global. Migration version 1 tạo `store_settings`; seed insert-on-conflict-do-nothing cấu hình cửa hàng từ `SEED_STORE_NAME`/`SEED_SHIPPING_FEE_VND`. Seed chỉ cho development/test và không ghi đè dữ liệu đã có. Chưa có tài khoản demo trước Phase 02.
+
+API không tự migrate. Thiếu/sai schema, dirty migration hoặc chưa seed khiến readiness/foundation trả 503; liveness vẫn phản ánh process. Khắc phục DB/schema/seed sẽ phục hồi readiness.
+
+Rollback chỉ dành database test có thể xóa và có đủ xác nhận:
+
+```bash
+make TEST_DATABASE_URL='postgres://user:password@localhost:5432/ecom_test?sslmode=disable' ALLOW_TEST_RESET=delete-test-schema reset-test
+```
+
+Guard từ chối tên DB khác, URL query ghi đè database và path bất thường. Dữ liệu cần giữ phải backup, kiểm tra tương thích và ưu tiên migration sửa tiến; không reset hoặc xóa volume để che lỗi.
+
+## Docker — tạm hoãn kiểm chứng
+
+Dockerfile/Compose đã được điều chỉnh đường dẫn cho WAS/Viewer. Trong lượt cơ cấu lại này không chạy Docker build, Compose config hoặc kiểm tra runtime Docker. Khi cần quay lại kiểm chứng:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+Backend build context là `was/`; Viewer build context là root để lấy contract từ WAS. Service Compose vẫn giữ tên `app`/`frontend` để không đổi wiring ngoài yêu cầu. Chuỗi startup vẫn PostgreSQL → migrate → seed → app → frontend. URL mặc định khi chạy Compose: Viewer localhost:8081, API localhost:8080.
+
+`docker compose down` giữ named volume. Profile `infrastructure` có Redis/RabbitMQ/worker; Phase 01 worker mới bootstrap/shutdown, chưa consume message. Local credentials chỉ là mẫu; password có ký tự đặc biệt trong DB URL phải được URL-encode.
+
+## Tài liệu
+
+- [Plan tổng](plans/00-master-plan.md), [Phase 01](plans/01-foundation-and-design-plan.md)
+- [Backend WAS](was/README.md), [Frontend Viewer](viewer/README.md)
+- [Requirements](docs/requirements.md), [architecture](docs/architecture.md), [ERD](docs/erd.md)
+- [API design](docs/api-design.md), [state machine](docs/order-payment-state-machine.md), [events](docs/events.md)
+- [Progress và evidence](docs/PROGRESS.md), [known issues](docs/known-issues.md)
+
+OpenAPI có contract tương lai được đánh dấu rõ. Phase 01 chỉ hiện thực health/foundation/spec; auth/catalog/cart/order/payment/coupon/review/notification chưa triển khai và trả 404. UI nền tảng đọc cấu hình thật từ PostgreSQL.

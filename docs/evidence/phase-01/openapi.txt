@@ -1,0 +1,9 @@
+
+> ecommerce-base-web@0.1.0 validate:api
+> redocly lint ../docs/openapi.yaml --config .redocly.yaml
+
+validating ../docs/openapi.yaml...
+../docs/openapi.yaml: validated in 80ms
+
+Woohoo! Your API description is valid. 🎉
+

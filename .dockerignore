@@ -1,0 +1,9 @@
+.git
+.env
+.env.*
+viewer/node_modules
+viewer/dist
+was/bin
+docs/evidence
+
+*.tsbuildinfo

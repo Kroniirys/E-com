@@ -1,0 +1,6 @@
+=== RUN   TestMigrationSeedAndRealHTTP
+--- PASS: TestMigrationSeedAndRealHTTP (0.04s)
+=== RUN   TestConstraintsAndSeedValidation
+--- PASS: TestConstraintsAndSeedValidation (0.05s)
+PASS
+ok  	ecommerce.local/base/tests/integration	0.090s

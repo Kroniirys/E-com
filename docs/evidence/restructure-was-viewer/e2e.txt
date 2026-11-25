@@ -1,0 +1,27 @@
+make -C was GO="/snap/go/current/bin/go" build
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+mkdir -p bin
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/api ./cmd/api
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/worker ./cmd/worker
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/migrate ./cmd/migrate
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/seed ./cmd/seed
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/healthcheck ./cmd/healthcheck
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'
+python3 scripts/run-e2e.py
+store settings seeded without overwriting existing data
+
+> ecommerce-base-viewer@0.1.0 test:e2e
+> playwright test
+
+[WebServer] (node:169886) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:169899) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:169938) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/foundation.spec.ts:2:1 › UI đọc backend/database thật và tài liệu API local hoạt động (1.4s)
+
+  1 passed (3.9s)

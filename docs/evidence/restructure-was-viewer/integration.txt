@@ -1,0 +1,10 @@
+make -C was GO="/snap/go/current/bin/go" test-integration
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+GO="/snap/go/current/bin/go" bash scripts/test-integration.sh
+=== RUN   TestMigrationSeedAndRealHTTP
+--- PASS: TestMigrationSeedAndRealHTTP (0.04s)
+=== RUN   TestConstraintsAndSeedValidation
+--- PASS: TestConstraintsAndSeedValidation (0.02s)
+PASS
+ok  	ecommerce.local/base/tests/integration	0.063s
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'

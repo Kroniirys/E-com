@@ -1,0 +1,38 @@
+[
+  {
+    "check": "missing DATABASE_URL fails startup",
+    "result": "PASS"
+  },
+  {
+    "check": "database override is rejected without secret leakage",
+    "result": "PASS"
+  },
+  {
+    "check": "API live/ready before failure",
+    "result": "PASS"
+  },
+  {
+    "check": "liveness survives real PostgreSQL shutdown",
+    "result": "PASS"
+  },
+  {
+    "check": "readiness detects real PostgreSQL outage",
+    "result": "PASS"
+  },
+  {
+    "check": "readiness recovers after PostgreSQL restart",
+    "result": "PASS"
+  },
+  {
+    "check": "API SIGTERM exits successfully",
+    "result": "PASS"
+  },
+  {
+    "check": "worker bootstraps real schema without claiming consumers",
+    "result": "PASS"
+  },
+  {
+    "check": "worker SIGTERM exits successfully",
+    "result": "PASS"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "image": "golang:1.27.4-bookworm",
+    "manifest_available": true
+  },
+  {
+    "image": "postgres:17.12-bookworm",
+    "manifest_available": true
+  },
+  {
+    "image": "node:24-alpine",
+    "manifest_available": true
+  },
+  {
+    "image": "nginx:1.28-alpine",
+    "manifest_available": true
+  },
+  {
+    "image": "debian:bookworm-slim",
+    "manifest_available": true
+  }
+]

@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+bin/
+*.log
+coverage.out
+viewer/node_modules/
+viewer/dist/
+viewer/playwright-report/
+viewer/test-results/
+viewer/src/api.generated.ts
+viewer/public/api-docs/swagger-ui-bundle.js
+viewer/public/api-docs/swagger-ui.css
+viewer/public/api-docs/favicon-32x32.png
+
+*.tsbuildinfo

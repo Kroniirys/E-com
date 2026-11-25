@@ -1,0 +1,25 @@
+make -C was GO="/snap/go/current/bin/go" check
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+/snap/go/current/bin/go test ./...
+?   	ecommerce.local/base/api	[no test files]
+?   	ecommerce.local/base/cmd/api	[no test files]
+?   	ecommerce.local/base/cmd/healthcheck	[no test files]
+?   	ecommerce.local/base/cmd/migrate	[no test files]
+?   	ecommerce.local/base/cmd/seed	[no test files]
+?   	ecommerce.local/base/cmd/worker	[no test files]
+ok  	ecommerce.local/base/internal/config	0.002s
+?   	ecommerce.local/base/internal/database	[no test files]
+ok  	ecommerce.local/base/internal/httpserver	0.006s
+ok  	ecommerce.local/base/internal/runtime	0.039s
+ok  	ecommerce.local/base/migrations	0.003s
+/snap/go/current/bin/go vet ./...
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'
+make -C was GO="/snap/go/current/bin/go" build
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+mkdir -p bin
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/api ./cmd/api
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/worker ./cmd/worker
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/migrate ./cmd/migrate
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/seed ./cmd/seed
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/healthcheck ./cmd/healthcheck
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'

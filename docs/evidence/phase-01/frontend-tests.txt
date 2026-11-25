@@ -1,0 +1,13 @@
+
+> ecommerce-base-web@0.1.0 test
+> vitest run
+
+
+ RUN  v5.1.1 /home/dat.nguyen19/personal/E-com/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  15:46:02
+   Duration  700ms (environment 63%, tests 19%, setup 10%, transform 6%, import 2%)
+

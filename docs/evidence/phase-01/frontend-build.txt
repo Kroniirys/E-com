@@ -1,0 +1,28 @@
+
+> ecommerce-base-web@0.1.0 prebuild
+> npm run prepare-docs && npm run generate:api
+
+
+> ecommerce-base-web@0.1.0 prepare-docs
+> node scripts/prepare-docs.mjs
+
+
+> ecommerce-base-web@0.1.0 generate:api
+> openapi-typescript ../docs/openapi.yaml -o src/api.generated.ts
+
+✨ openapi-typescript 7.13.0
+🚀 ../docs/openapi.yaml → src/api.generated.ts [211.8ms]
+
+> ecommerce-base-web@0.1.0 build
+> tsc -b && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 17 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.50 kB │ gzip:  0.33 kB
+dist/assets/index-ClELJasx.css   14.25 kB │ gzip:  3.93 kB
+dist/assets/index-BWMyTOOg.js   226.57 kB │ gzip: 71.17 kB
+
+✓ built in 133ms

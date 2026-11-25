@@ -1,0 +1,3 @@
+PASS: docker compose --env-file .env.example config --quiet
+PASS: docker compose --env-file .env.example --profile infrastructure --profile test config --quiet
+Runtime: CHƯA KIỂM CHỨNG — Docker daemon permission denied; rootless thiếu uidmap và subordinate UID/GID.

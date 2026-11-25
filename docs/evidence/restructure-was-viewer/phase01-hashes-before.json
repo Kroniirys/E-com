@@ -1,0 +1,21 @@
+{
+  "docs/evidence/phase-01/build-go.txt": "68620087edbb412924634f5fc7ab1ba744b903f4f8f2c92447419ce25f49760a",
+  "docs/evidence/phase-01/compose-validation.txt": "02f865ccd24455b32aa21329ead5fc5bf5e98b72083a081242db35b11b075ef0",
+  "docs/evidence/phase-01/desktop.png": "6ff88427627e6177224b616d86558aed45c62f84b259765927d5c6b7b959ee5a",
+  "docs/evidence/phase-01/e2e-api.log": "e33ece525b6b6d594e3ee4ed6c6ea3223a064e15ba89f565ad1b86f8ba58c369",
+  "docs/evidence/phase-01/e2e.txt": "8a5bb913d9ddb710ff0413a9405daec619422ec91cc07d2661f89834ecc1eefd",
+  "docs/evidence/phase-01/frontend-build.txt": "2cc8c126399a3a19d7be8b03c113fad6d07f4fccf5baf4c274afebe0162c3dcf",
+  "docs/evidence/phase-01/frontend-lint.txt": "a5bea94806061b37fef1d97f2d63127711c6e0582448558d11623733f57e344f",
+  "docs/evidence/phase-01/frontend-tests.txt": "1154821b35246ebd3703cf96a94d3f999c813a1935e35e818901acd8711f1e8e",
+  "docs/evidence/phase-01/frontend-typecheck.txt": "50b1fd838e28abedb9582cb5942072dacbb3e6a7e924528352e3b81f8de8f439",
+  "docs/evidence/phase-01/go-race.txt": "05dab46be4594d1e8f8a514d67567947495f2685a292f96098820552bd22a2d6",
+  "docs/evidence/phase-01/go-vet.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "docs/evidence/phase-01/image-manifests.json": "50439138f6f21de3b22ade196cfefeea5aefffb9fd5899b0107ca55068b40c5d",
+  "docs/evidence/phase-01/integration.txt": "47b762fbc25e6d736b96abcccb98a7ba1cade925816d2da28024643f43b258fc",
+  "docs/evidence/phase-01/mobile.png": "82b9efe20049856e047854a2f672973c5bbea47e812283303c342c762a9e7d43",
+  "docs/evidence/phase-01/native-smoke.json": "7655ad52f746ecdbd5f507d56fc351a09841efdc5e278e17bf1c3ee56138623e",
+  "docs/evidence/phase-01/npm-ci.txt": "2cfc6791ca5f3b459541eeb58aa9a26bca35f49d22c50f64d5cde6a894fd7e1f",
+  "docs/evidence/phase-01/openapi.txt": "f8edded26f61944f16e076a9f87c8c791a1141f9f1c63d5d4eef8b3040df2d96",
+  "docs/evidence/phase-01/smoke-api.log": "38322696fb79da273323af946d0d92f8fc49bc2f45826dae1f438dd215a0bd89",
+  "docs/evidence/phase-01/smoke-worker.log": "af5566eeee7bffd55cca23330efc16f3d34d881980d3463124b83d1063a8ba41"
+}

@@ -1,0 +1,12 @@
+?   	ecommerce.local/base/cmd/api	[no test files]
+?   	ecommerce.local/base/cmd/healthcheck	[no test files]
+?   	ecommerce.local/base/cmd/migrate	[no test files]
+?   	ecommerce.local/base/cmd/seed	[no test files]
+?   	ecommerce.local/base/cmd/worker	[no test files]
+?   	ecommerce.local/base/docs	[no test files]
+?   	ecommerce.local/base/frontend/node_modules/flatted/golang/pkg/flatted	[no test files]
+ok  	ecommerce.local/base/internal/config	1.008s
+?   	ecommerce.local/base/internal/database	[no test files]
+ok  	ecommerce.local/base/internal/httpserver	1.030s
+ok  	ecommerce.local/base/internal/runtime	1.044s
+ok  	ecommerce.local/base/migrations	1.007s

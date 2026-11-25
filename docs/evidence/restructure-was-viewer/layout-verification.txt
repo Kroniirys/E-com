@@ -1,0 +1,6 @@
+PASS: was owns Go module/cmd/internal/migrations/tests/bin/API embed.
+PASS: viewer owns npm/src/e2e/build configuration.
+PASS: root Makefile delegates to was and viewer.
+PASS: docs/plans/README links and lock metadata valid.
+PASS: 19 historical Phase 01 evidence files unchanged by SHA-256.
+Docker: NOT RUN, deferred by user.
