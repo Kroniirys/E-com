@@ -11,11 +11,14 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"ecommerce.local/base/internal/modules/admin"
 	"ecommerce.local/base/internal/modules/auth"
 	"ecommerce.local/base/internal/modules/cart"
 	"ecommerce.local/base/internal/modules/catalog"
+	"ecommerce.local/base/internal/modules/coupons"
 	"ecommerce.local/base/internal/modules/inventory"
 	"ecommerce.local/base/internal/modules/orders"
+	"ecommerce.local/base/internal/modules/reviews"
 	"ecommerce.local/base/internal/modules/users"
 	"ecommerce.local/base/internal/platform/problem"
 
@@ -23,6 +26,9 @@ import (
 )
 
 type API struct {
+	Coupons      *coupons.Service
+	Reviews      *reviews.Service
+	Dashboard    *admin.Service
 	Cart         *cart.Service
 	Orders       *orders.Service
 	Auth         *auth.Service
@@ -161,6 +167,9 @@ func (a *API) require(admin bool) gin.HandlerFunc {
 	}
 }
 func (a *API) Register(r *gin.Engine) {
+	if a.Coupons != nil && a.Reviews != nil && a.Dashboard != nil {
+		a.engagement(r)
+	}
 	if a.Cart != nil && a.Orders != nil {
 		a.commerce(r)
 	}

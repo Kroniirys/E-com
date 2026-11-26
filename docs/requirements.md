@@ -44,3 +44,7 @@ Không commit/log secret, password, token hoặc địa chỉ đầy đủ. Quy�
 ## Kết quả Phase 03
 
 CART-01, ORD-01, PAY-01 và phần checkout/cancel của INV-01 đã hiện thực. ADM-01 bổ sung list/detail và lifecycle order; ASY-01 có outbox cùng transaction, chưa publish/consume. SQL concurrency chứng minh 20 khách tranh stock5 chỉ tạo5đơn; payment success đồng thời chỉ1Paid; cancel/replay không hoàn/trừ lặp. Browser đi qua COD/Delivered và mock Failure→retry→Paid, gồm mất response/reload/khôi phục. [Progress và evidence](PROGRESS.md).
+
+## Kết quả Phase 04
+
+CPN-01 và REV-01 đã triển khai; ADM-01 bổ sung dashboard/coupon/moderation với SQL thật. Coupon được kiểm lại và lưu usage/snapshot trong checkout transaction; review cần Delivered và public aggregate theo visibility. Chi tiết và evidence tại [progress](PROGRESS.md). Cache/publisher/consumer/notification còn thuộc Phase05.

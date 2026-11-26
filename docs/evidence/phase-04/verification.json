@@ -1,0 +1,7 @@
+{
+  "go_unit_tests": 16,
+  "integration_tests": 31,
+  "e2e_specs": 4,
+  "missing_links": [],
+  "secret_pattern_files": []
+}

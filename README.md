@@ -1,6 +1,6 @@
 # E-commerce Base
 
-Workspace tách rõ hai phần: **WAS là backend Go**, **Viewer là frontend React**. Phase 03 bổ sung giỏ hàng, checkout, đơn hàng và COD/thanh toán mô phỏng trên nền tảng tài khoản/catalog/tồn kho; Docker hiện được tạm hoãn theo yêu cầu.
+Workspace tách rõ hai phần: **WAS là backend Go**, **Viewer là frontend React**. Phase 04 đã bổ sung coupon, review/moderation và dashboard trên nền mua hàng COD/mock, tài khoản/catalog/tồn kho; Docker hiện được tạm hoãn theo yêu cầu.
 
 ## Cấu trúc
 
@@ -179,3 +179,13 @@ Inventory adjustment cần Idempotency-Key 16–128 ký tự chữ/số/gạch n
 Checkout/cancel/status/attempt/simulate cần Idempotency-Key. Viewer lưu key và request đang chờ theo tài khoản trong sessionStorage, không lưu token. Nếu mất response, nút kiểm tra lại giữ đúng intent cả sau reload; lỗi xác thực/rate limit không làm mất key. Server lưu kết quả cùng mutation, replay không tạo đơn/thanh toán/hoàn kho trùng. Snapshot sản phẩm/giá/địa chỉ/shipping giữ nguyên sau khi dữ liệu nguồn đổi.
 
 Order/payment/inventory events được ghi vào outbox trong cùng transaction. Chưa có publisher/notification; Phase 05 sẽ xử lý backlog. Sau khi build, có thể kiểm chứng kill/restart API test bằng `python3 scripts/phase03-restart.py` với TEST_DATABASE_URL, TEST_REDIS_URL và E2E_EVIDENCE_DIR; script tạo/dọn schema riêng, dùng port 18081, không dừng API khác.
+
+## Phase 04 — Coupon, đánh giá và tổng quan
+
+Admin dùng `/#/admin/coupons`, `/#/admin/reviews`, `/#/admin/dashboard`. Coupon Percentage1–100 hoặc Fixed VND, một mã/đơn, không giảm shipping; preview không giữ lượt. Checkout kiểm lại terms/expiry/limit và lưu usage/snapshot cùng stock/order/outbox. Hủy không hoàn lượt dùng. Coupon archive giữ tham chiếu và snapshot đơn cũ.
+
+Khách có đơn Delivered mới được review ở trang sản phẩm. Một review/user/product kể cả đã xóa; nội dung plain text. Admin ẩn/hiện có lý do; public chỉ tính count/average trên review Visible chưa xóa. Chủ review vẫn thấy review bị ẩn và có thể xóa.
+
+Dashboard lọc theo ngày tạo, `from` bao gồm và `to` loại trừ, timezone IANA (mặc định UTC). Tổng tiền chỉ gồm Delivered + Paid; trả chuỗi decimal chính xác và Viewer hiển thị bằng BigInt, không giới hạn tổng theo trần một order.
+
+Schema hiện tại v4. Muốn thêm dữ liệu mẫu coupon và review có đơn Delivered thật, đặt `SEED_PHASE04_DATA=true` cùng `SEED_DEMO_DATA=true`, rồi chạy seed. Đây là opt-in: cần cart demo trống và SKU BASE-REVIEW/code BASE10 chưa bị dùng; toàn bộ fixture được tạo qua service trong transaction, chạy lại không nhân bản. Không bật tùy chọn này trên dữ liệu cần giữ nếu chưa xem phạm vi fixture. Docker vẫn tạm hoãn.

@@ -3,10 +3,10 @@ title: "Phase 04 — Coupon, đánh giá và quản trị"
 artifact: implementation-plan
 role: fullstack
 status: draft
-version: 0.2
-owner: "TBD"
+version: 0.3
+owner: "datnguyen <dat01687241584@gmail.com>"
 approvers: []
-last_updated: 2026-11-25
+last_updated: 2026-11-26
 ---
 
 # Phase 04 — Coupon, đánh giá và quản trị
@@ -81,17 +81,27 @@ Coupon preview có thể cũ; checkout là nơi quyết định cuối. Không s
 
 ## 5. Tiêu chí hoàn thành
 
-- [ ] Coupon đủ chính sách, được kiểm tra lại trong checkout và không vượt usage limit khi đồng thời.
-- [ ] Review đúng quyền/điều kiện Delivered, không trùng và moderation/rating public nhất quán.
-- [ ] Dashboard/admin/customer UI dùng API/dữ liệu thật; công thức chỉ số được ghi rõ.
-- [ ] Regression checkout/payment/stock cũ và có coupon đều đạt.
-- [ ] Migration/contract/seed/docs và evidence khớp hành vi đã triển khai.
+- [x] Coupon đủ chính sách, được kiểm tra lại trong checkout và không vượt usage limit khi đồng thời.
+- [x] Review đúng quyền/điều kiện Delivered, không trùng và moderation/rating public nhất quán.
+- [x] Dashboard/admin/customer UI dùng API/dữ liệu thật; công thức chỉ số được ghi rõ.
+- [x] Regression checkout/payment/stock cũ và có coupon đều đạt.
+- [x] Migration/contract/seed/docs và evidence khớp hành vi đã triển khai.
 
 ## 6. Checklist review
 
-- [ ] Không có mutation coupon/stock tách khỏi transaction checkout.
-- [ ] Chính sách rounding/minimum/expiry/cancel đã ghi rõ, không tự phát sinh stacking/refund.
-- [ ] Review visibility, ownership, uniqueness và dashboard query được kiểm tra.
-- [ ] Không tạo duplicate ownership hoặc duplicate notification giữa các module.
+- [x] Không có mutation coupon/stock tách khỏi transaction checkout.
+- [x] Chính sách rounding/minimum/expiry/cancel đã ghi rõ, không tự phát sinh stacking/refund.
+- [x] Review visibility, ownership, uniqueness và dashboard query được kiểm tra.
+- [x] Không tạo duplicate ownership hoặc duplicate notification giữa các module.
 
 Tiếp theo: [Phase 05](05-cache-events-workers-plan.md).
+
+## Implementation Result
+
+### Lần 1 (2026-11-26)
+
+Đã thực hiện P04-01–06: schema4, coupon/preview/usage/snapshot/checkout nguyên tử, review Delivered/moderation/aggregate và dashboard theo ngày/múi giờ, cùng UI customer/admin. Seed Phase04 opt-in đi qua checkout và lifecycle thật, giữ guard cart và chống tạo trùng.
+
+Đạt16 Go unit/race, vet, 31 integration,13 Viewer unit và4 E2E spec. Có legacy replay3→4, coupon limit race/rollback, review uniqueness/ownership/visibility, dashboard tổng vượt trần order và guard rollback. Review độc lập đã sửa finding response moderation; không còn finding cần sửa trong phạm vi được rà. [Progress/evidence](../docs/PROGRESS.md), [review](../docs/review-phase-04.md).
+
+Status giữ draft, checkbox thể hiện triển khai, không tự phê duyệt. Docker tạm hoãn; publisher/cache/notification thuộc Phase05. Chưa commit/push Phase04.

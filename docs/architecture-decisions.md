@@ -53,3 +53,9 @@ Phase 01 không có blocker thiết kế cho auth/catalog. Trước Phase 05 ph�
 - ADR-029: transaction retry tối đa 3 lần, chỉ SQLSTATE 40001/40P01; không gọi mạng trong transaction. Không retry lỗi nghiệp vụ/constraint thành đơn mới. Giá, trạng thái, stock vẫn được đọc và kiểm lại.
 - ADR-030: Mock chỉ development/test, tối đa 5 attempts/order, một Pending và một Paid/payment nhờ partial unique index. Khi flag tắt không mount route attempt/simulate; production không cho bật. Failed attempt bất biến, tạo attempt mới để retry.
 - ADR-031: Viewer giữ intent chưa biết kết quả trong sessionStorage theo user/operation; token vẫn chỉ ở memory. Chỉ bỏ key khi success hoặc business rejection xác định; giữ qua lỗi mạng, 5xx, auth/session/rate limit. E2E cô lập API/schema/Redis prefix theo spec, giữ nguyên policy auth thật.
+
+## Phase 04
+
+Coupon preview hash bind base quote, coupon ID/version/terms/discount/total; used_count không đổi terms version. Lock checkout thêm coupon giữa product và inventory. Consume/usage/snapshot/stock/outbox/idempotency cùng commit, hủy không hoàn lượt. Code coupon_code omitempty giữ replay legacy.
+
+Review Delivered là proof bất biến; tạo khóa user rồi product, unique cả soft-delete. Public visibility + summary/list cùng snapshot. Dashboard dùng [from,to) calendar dates theo IANA, tất cả chỉ số theo created_at; sum trả decimal string và UI BigInt để không mất độ chính xác.

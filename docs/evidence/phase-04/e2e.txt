@@ -1,0 +1,86 @@
+make -C was GO="/snap/go/current/bin/go" build
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+mkdir -p bin
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/api ./cmd/api
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/worker ./cmd/worker
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/migrate ./cmd/migrate
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/seed ./cmd/seed
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/healthcheck ./cmd/healthcheck
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'
+make -C was GO="/snap/go/current/bin/go" test-helper
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/testscope ./cmd/testscope
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'
+python3 scripts/run-e2e.py
+Running isolated E2E spec: e2e/foundation.spec.ts
+store settings seeded without overwriting existing data
+
+> ecommerce-base-viewer@0.1.0 test:e2e
+> playwright test e2e/foundation.spec.ts
+
+[WebServer] (node:209382) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:209414) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:209443) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/foundation.spec.ts:2:1 › UI đọc backend/database thật và tài liệu API local hoạt động (1.2s)
+
+  1 passed (3.6s)
+Running isolated E2E spec: e2e/phase02.spec.ts
+store settings seeded without overwriting existing data
+
+> ecommerce-base-viewer@0.1.0 test:e2e
+> playwright test e2e/phase02.spec.ts
+
+[WebServer] (node:209808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:209821) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:209848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/phase02.spec.ts:3:1 › Phase 02: admin CRUD và tồn kho, customer profile, session nhiều tab (5.6s)
+
+  1 passed (6.9s)
+Running isolated E2E spec: e2e/phase03.spec.ts
+store settings seeded without overwriting existing data
+
+> ecommerce-base-viewer@0.1.0 test:e2e
+> playwright test e2e/phase03.spec.ts
+
+[WebServer] (node:210231) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:210244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:210271) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/phase03.spec.ts:3:1 › Phase 03: COD, mất response/reload/retry, admin giao hàng và mock thất bại rồi thành công (4.0s)
+
+  1 passed (5.4s)
+Running isolated E2E spec: e2e/phase04.spec.ts
+store settings seeded without overwriting existing data
+
+> ecommerce-base-viewer@0.1.0 test:e2e
+> playwright test e2e/phase04.spec.ts
+
+[WebServer] (node:210611) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:210624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:210651) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/phase04.spec.ts:2:1 › Phase04: coupon checkout, Delivered review, moderation và dashboard (3.5s)
+
+  1 passed (4.9s)

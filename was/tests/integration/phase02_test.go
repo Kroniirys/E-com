@@ -23,11 +23,14 @@ import (
 	"ecommerce.local/base/internal/database"
 	"ecommerce.local/base/internal/httpapi"
 	"ecommerce.local/base/internal/httpserver"
+	adminModule "ecommerce.local/base/internal/modules/admin"
 	"ecommerce.local/base/internal/modules/auth"
 	"ecommerce.local/base/internal/modules/cart"
 	"ecommerce.local/base/internal/modules/catalog"
+	"ecommerce.local/base/internal/modules/coupons"
 	"ecommerce.local/base/internal/modules/inventory"
 	"ecommerce.local/base/internal/modules/orders"
+	"ecommerce.local/base/internal/modules/reviews"
 	"ecommerce.local/base/internal/modules/users"
 	"ecommerce.local/base/internal/platform/limit"
 	"ecommerce.local/base/internal/platform/problem"
@@ -114,7 +117,7 @@ func fixture(t *testing.T) *phaseFixture {
 		t.Fatal(err)
 	}
 	f := &phaseFixture{DB: db, DSN: dsn, Auth: authService, Users: users.New(db), Catalog: catalog.New(db), Inventory: inventory.New(db), Limiter: limiter, Admin: admin, Customer: customer}
-	endpoints := &httpapi.API{Cart: cart.New(db, true), Orders: orders.New(db, true), Auth: f.Auth, Users: f.Users, Catalog: f.Catalog, Inventory: f.Inventory, Origins: []string{testOrigin}}
+	endpoints := &httpapi.API{Coupons: coupons.New(db), Reviews: reviews.New(db), Dashboard: adminModule.New(db), Cart: cart.New(db, true), Orders: orders.New(db, true), Auth: f.Auth, Users: f.Users, Catalog: f.Catalog, Inventory: f.Inventory, Origins: []string{testOrigin}}
 	cfg := config.Config{Environment: "test", Version: "phase02-integration", RequestTimeout: 5 * time.Second, AllowedOrigins: []string{testOrigin}}
 	f.Server = httptest.NewServer(httpserver.New(cfg, db, slog.New(slog.NewJSONHandler(io.Discard, nil)), endpoints.Register).Handler)
 	t.Cleanup(f.Server.Close)

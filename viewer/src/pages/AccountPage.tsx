@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { MyReviews } from './ProductReviews'
 import type { FormEvent } from 'react'
 import { errorMessage } from '../api'
 import type { Address, Page, User } from '../api'
@@ -186,6 +187,7 @@ export default function AccountPage() {
           )}
         </ListState>
       </section>
+      <MyReviews />
     </main>
   )
 }

@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "E-commerce Base API",
-    "version": "0.3.0",
-    "description": "Phase 01–03 đã triển khai: foundation, tài khoản, catalog, inventory, cart, orders và COD/mock payment. Các endpoint Phase 04–05 vẫn là contract dự kiến."
+    "version": "0.4.0",
+    "description": "Phase 01–04 đã triển khai. Cache, publisher/consumer và notification Phase 05 vẫn là contract dự kiến."
   },
   "servers": [
     {
@@ -26,7 +26,7 @@
     },
     {
       "name": "Phase 04",
-      "description": "Contract dự kiến, chưa triển khai"
+      "description": "Coupon, review/moderation và dashboard đã triển khai"
     },
     {
       "name": "Phase 05",
@@ -6322,12 +6322,12 @@
       "post": {
         "operationId": "post_api_v1_coupons_validate",
         "summary": "Preview coupon",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: customer. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -6441,12 +6441,12 @@
       "get": {
         "operationId": "get_api_v1_admin_coupons",
         "summary": "Quản lý coupon",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: admin. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: admin. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "admin",
         "security": [
           {
@@ -6598,12 +6598,12 @@
       "post": {
         "operationId": "post_api_v1_admin_coupons",
         "summary": "Quản lý coupon",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: admin. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: admin. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "admin",
         "security": [
           {
@@ -6717,12 +6717,12 @@
       "get": {
         "operationId": "get_api_v1_admin_coupons_id",
         "summary": "Chi tiết/cập nhật coupon",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: admin. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: admin. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "admin",
         "security": [
           {
@@ -6835,12 +6835,12 @@
       "put": {
         "operationId": "put_api_v1_admin_coupons_id",
         "summary": "Chi tiết/cập nhật coupon",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: admin. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: admin. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "admin",
         "security": [
           {
@@ -6959,18 +6959,120 @@
             }
           }
         }
+      },
+      "delete": {
+        "operationId": "delete_api_v1_admin_coupons_id",
+        "summary": "Lưu trữ coupon",
+        "description": "Đã triển khai Phase 04. Quyền: admin. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
+        "tags": [
+          "Phase 04"
+        ],
+        "x-phase": 4,
+        "x-implemented": true,
+        "x-required-role": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Đầu vào không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Chưa xác thực",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không có quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tồn tại hoặc chưa triển khai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Xung đột trạng thái/stock/version/key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Vượt giới hạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependency chưa sẵn sàng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Đã lưu trữ, giữ usage/snapshot"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
       }
     },
     "/api/v1/products/{id}/reviews": {
       "get": {
         "operationId": "get_api_v1_products_id_reviews",
         "summary": "Review visible",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: public. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: public. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "public",
         "security": [],
         "responses": {
@@ -6982,35 +7084,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/Review"
-                          }
-                        },
-                        "page": {
-                          "type": "integer",
-                          "minimum": 1
-                        },
-                        "page_size": {
-                          "type": "integer",
-                          "minimum": 1,
-                          "maximum": 100
-                        },
-                        "total": {
-                          "type": "integer",
-                          "minimum": 0
-                        }
-                      },
-                      "required": [
-                        "items",
-                        "page",
-                        "page_size",
-                        "total"
-                      ],
-                      "additionalProperties": false
+                      "$ref": "#/components/schemas/ReviewPage"
                     }
                   },
                   "required": [
@@ -7127,12 +7201,12 @@
       "post": {
         "operationId": "post_api_v1_products_id_reviews",
         "summary": "Đánh giá đã mua",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: customer. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -7257,12 +7331,12 @@
       "delete": {
         "operationId": "delete_api_v1_reviews_id",
         "summary": "Xóa review của mình",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: customer. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -7361,12 +7435,12 @@
       "get": {
         "operationId": "get_api_v1_admin_reviews",
         "summary": "Quản lý review",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: admin. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: admin. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "admin",
         "security": [
           {
@@ -7382,35 +7456,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/Review"
-                          }
-                        },
-                        "page": {
-                          "type": "integer",
-                          "minimum": 1
-                        },
-                        "page_size": {
-                          "type": "integer",
-                          "minimum": 1,
-                          "maximum": 100
-                        },
-                        "total": {
-                          "type": "integer",
-                          "minimum": 0
-                        }
-                      },
-                      "required": [
-                        "items",
-                        "page",
-                        "page_size",
-                        "total"
-                      ],
-                      "additionalProperties": false
+                      "$ref": "#/components/schemas/AdminReviewPage"
                     }
                   },
                   "required": [
@@ -7512,6 +7558,17 @@
               "maximum": 100,
               "default": 20
             }
+          },
+          {
+            "name": "visibility",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Visible",
+                "Hidden"
+              ]
+            }
           }
         ]
       }
@@ -7520,12 +7577,12 @@
       "patch": {
         "operationId": "patch_api_v1_admin_reviews_id_moderation",
         "summary": "Ẩn/hiện review",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: admin. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: admin. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "admin",
         "security": [
           {
@@ -7541,7 +7598,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/Review"
+                      "$ref": "#/components/schemas/AdminReview"
                     }
                   },
                   "required": [
@@ -7650,12 +7707,12 @@
       "get": {
         "operationId": "get_api_v1_admin_dashboard",
         "summary": "Dashboard dữ liệu thật",
-        "description": "CHƯA TRIỂN KHAI: Phase 04. Quyền: admin. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 04. Quyền: admin. Server kiểm tra ownership, điều kiện nghiệp vụ và input.",
         "tags": [
           "Phase 04"
         ],
         "x-phase": 4,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "admin",
         "security": [
           {
@@ -7752,7 +7809,36 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Ngày YYYY-MM-DD theo timezone; to loại trừ"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Ngày YYYY-MM-DD theo timezone; to loại trừ"
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "UTC"
+            },
+            "description": "IANA timezone, ví dụ Asia/Ho_Chi_Minh; không nhận Local"
+          }
+        ]
       }
     },
     "/api/v1/notifications": {
@@ -8149,6 +8235,277 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/products/{id}/review-eligibility": {
+      "get": {
+        "operationId": "get_api_v1_products_id_review_eligibility",
+        "summary": "Điều kiện và review của tài khoản hiện tại",
+        "description": "Đã triển khai Phase 04. Customer đã xác thực chỉ nhận dữ liệu của tài khoản hiện tại.",
+        "tags": [
+          "Phase 04"
+        ],
+        "x-phase": 4,
+        "x-implemented": true,
+        "x-required-role": "customer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ReviewEligibility"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Đầu vào không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Chưa xác thực",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không có quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tồn tại hoặc chưa triển khai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Xung đột trạng thái/stock/version/key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Vượt giới hạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependency chưa sẵn sàng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "maximum": 100000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/me/reviews": {
+      "get": {
+        "operationId": "get_api_v1_me_reviews",
+        "summary": "Review của tài khoản hiện tại",
+        "description": "Đã triển khai Phase 04. Customer đã xác thực chỉ nhận dữ liệu của tài khoản hiện tại.",
+        "tags": [
+          "Phase 04"
+        ],
+        "x-phase": 4,
+        "x-implemented": true,
+        "x-required-role": "customer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/MyReviewPage"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Đầu vào không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Chưa xác thực",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không có quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tồn tại hoặc chưa triển khai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Xung đột trạng thái/stock/version/key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Vượt giới hạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependency chưa sẵn sàng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "maximum": 100000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
             }
           }
         ]
@@ -8751,6 +9108,9 @@
           },
           "mock_payments_enabled": {
             "type": "boolean"
+          },
+          "coupon_snapshot": {
+            "$ref": "#/components/schemas/CouponSnapshot"
           }
         },
         "required": [
@@ -8768,7 +9128,8 @@
           "user_id",
           "version",
           "history",
-          "mock_payments_enabled"
+          "mock_payments_enabled",
+          "coupon_snapshot"
         ],
         "additionalProperties": false
       },
@@ -8946,7 +9307,10 @@
             "format": "uuid"
           },
           "code": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
           },
           "kind": {
             "type": "string",
@@ -8957,7 +9321,8 @@
           },
           "value": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 1,
+            "maximum": 9000000000000
           },
           "minimum_minor": {
             "type": "integer",
@@ -8971,7 +9336,8 @@
           },
           "usage_limit": {
             "type": "integer",
-            "minimum": 1
+            "minimum": 1,
+            "maximum": 9000000000000
           },
           "used_count": {
             "type": "integer",
@@ -8979,6 +9345,14 @@
           },
           "enabled": {
             "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
@@ -8990,7 +9364,9 @@
           "expires_at",
           "usage_limit",
           "used_count",
-          "enabled"
+          "enabled",
+          "version",
+          "created_at"
         ],
         "additionalProperties": false
       },
@@ -9011,12 +9387,43 @@
             "format": "int64",
             "minimum": 0,
             "maximum": 9000000000000
+          },
+          "cart_quote_hash": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          },
+          "cart_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "quote_hash": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          },
+          "subtotal_minor": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "maximum": 9000000000000
+          },
+          "shipping_minor": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "maximum": 9000000000000
           }
         },
         "required": [
           "code",
           "discount_minor",
-          "total_minor"
+          "total_minor",
+          "cart_quote_hash",
+          "cart_version",
+          "quote_hash",
+          "subtotal_minor",
+          "shipping_minor"
         ],
         "additionalProperties": false
       },
@@ -9054,6 +9461,9 @@
           "created_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "deleted": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9063,7 +9473,8 @@
           "rating",
           "content",
           "visibility",
-          "created_at"
+          "created_at",
+          "deleted"
         ],
         "additionalProperties": false
       },
@@ -9110,19 +9521,23 @@
             "type": "integer"
           },
           "delivered_paid_total_minor": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 0,
-            "maximum": 9000000000000
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "Exact decimal VND sum over Delivered orders with Paid payment; no per-order amount cap on aggregate."
+          },
+          "range": {
+            "$ref": "#/components/schemas/DashboardRange"
           }
         },
         "required": [
           "user_count",
           "product_count",
           "order_count",
-          "delivered_paid_total_minor"
+          "delivered_paid_total_minor",
+          "range"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Counts by created_at: users/products not soft-deleted, all orders; exact sum of orders.total_minor only Delivered + Paid. from/to are local calendar dates, to exclusive; returned instants UTC."
       },
       "Token": {
         "type": "object",
@@ -9421,6 +9836,11 @@
               "COD",
               "Mock"
             ]
+          },
+          "coupon_code": {
+            "type": "string",
+            "maxLength": 64,
+            "description": "Optional; absent/empty preserves the Phase 03 request fingerprint. With coupon, quote_hash must come from coupons/validate."
           }
         },
         "required": [
@@ -9491,7 +9911,8 @@
           "code": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 64
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
           },
           "kind": {
             "type": "string",
@@ -9502,7 +9923,8 @@
           },
           "value": {
             "type": "integer",
-            "minimum": 1
+            "minimum": 1,
+            "maximum": 9000000000000
           },
           "minimum_minor": {
             "type": "integer",
@@ -9516,7 +9938,8 @@
           },
           "usage_limit": {
             "type": "integer",
-            "minimum": 1
+            "minimum": 1,
+            "maximum": 9000000000000
           },
           "enabled": {
             "type": "boolean"
@@ -9531,7 +9954,8 @@
           "usage_limit",
           "enabled"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Code normalize upper/trim. Percentage value1..100; Fixed1..9e12 VND. Expiry UTC; usage_limit không được nhỏ hơn used_count."
       },
       "CouponValidateInput": {
         "type": "object",
@@ -9584,7 +10008,8 @@
           },
           "reason": {
             "type": "string",
-            "maxLength": 500
+            "maxLength": 500,
+            "minLength": 1
           }
         },
         "required": [
@@ -9739,6 +10164,346 @@
           "to_status",
           "reason",
           "created_at"
+        ],
+        "additionalProperties": false
+      },
+      "CouponSnapshot": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "Percentage",
+              "Fixed"
+            ]
+          },
+          "value": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "maximum": 9000000000000
+          },
+          "minimum_minor": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "maximum": 9000000000000
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "discount_minor": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "maximum": 9000000000000
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "kind",
+          "value",
+          "minimum_minor",
+          "expires_at",
+          "discount_minor",
+          "version"
+        ],
+        "additionalProperties": false,
+        "nullable": true
+      },
+      "ReviewSummary": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "average_rating": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5,
+            "description": "Average over visible, not-deleted reviews, rounded to two decimal places; zero if none."
+          }
+        },
+        "required": [
+          "count",
+          "average_rating"
+        ],
+        "additionalProperties": false
+      },
+      "ReviewPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ReviewSummary"
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "page_size",
+          "total",
+          "summary"
+        ],
+        "additionalProperties": false
+      },
+      "ReviewEligibility": {
+        "type": "object",
+        "properties": {
+          "can_review": {
+            "type": "boolean"
+          },
+          "reason_code": {
+            "type": "string",
+            "enum": [
+              "ELIGIBLE",
+              "PURCHASE_REQUIRED",
+              "ALREADY_REVIEWED",
+              "PRODUCT_UNAVAILABLE"
+            ]
+          },
+          "review": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "product_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "user_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "rating": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "content": {
+                "type": "string",
+                "maxLength": 2000
+              },
+              "visibility": {
+                "type": "string",
+                "enum": [
+                  "Visible",
+                  "Hidden"
+                ]
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "product_id",
+              "user_id",
+              "rating",
+              "content",
+              "visibility",
+              "created_at",
+              "deleted"
+            ],
+            "additionalProperties": false,
+            "nullable": true
+          }
+        },
+        "required": [
+          "can_review",
+          "reason_code",
+          "review"
+        ],
+        "additionalProperties": false
+      },
+      "AdminReview": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "product_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "Visible",
+              "Hidden"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "moderation_reason": {
+            "type": "string"
+          },
+          "moderated_by": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "moderated_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "product_id",
+          "user_id",
+          "rating",
+          "content",
+          "visibility",
+          "created_at",
+          "deleted",
+          "moderation_reason",
+          "moderated_by",
+          "moderated_at"
+        ],
+        "additionalProperties": false
+      },
+      "MyReviewPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "page_size",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "AdminReviewPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminReview"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "page_size",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "DashboardRange": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "timezone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "timezone"
         ],
         "additionalProperties": false
       }

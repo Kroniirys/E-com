@@ -12,11 +12,14 @@ import (
 	"ecommerce.local/base/internal/database"
 	"ecommerce.local/base/internal/httpapi"
 	"ecommerce.local/base/internal/httpserver"
+	"ecommerce.local/base/internal/modules/admin"
 	"ecommerce.local/base/internal/modules/auth"
 	"ecommerce.local/base/internal/modules/cart"
 	"ecommerce.local/base/internal/modules/catalog"
+	"ecommerce.local/base/internal/modules/coupons"
 	"ecommerce.local/base/internal/modules/inventory"
 	"ecommerce.local/base/internal/modules/orders"
+	"ecommerce.local/base/internal/modules/reviews"
 	"ecommerce.local/base/internal/modules/users"
 	"ecommerce.local/base/internal/platform/limit"
 	appRuntime "ecommerce.local/base/internal/runtime"
@@ -59,7 +62,7 @@ func run() int {
 		log.Error("authentication initialization failed")
 		return 1
 	}
-	endpoints := &httpapi.API{Cart: cart.New(db, security.MockPayments), Orders: orders.New(db, security.MockPayments), Auth: authService, Users: users.New(db), Catalog: catalog.New(db), Inventory: inventory.New(db), Origins: cfg.AllowedOrigins, SecureCookie: security.SecureCookie}
+	endpoints := &httpapi.API{Coupons: coupons.New(db), Reviews: reviews.New(db), Dashboard: admin.New(db), Cart: cart.New(db, security.MockPayments), Orders: orders.New(db, security.MockPayments), Auth: authService, Users: users.New(db), Catalog: catalog.New(db), Inventory: inventory.New(db), Origins: cfg.AllowedOrigins, SecureCookie: security.SecureCookie}
 	server := httpserver.New(cfg, db, log, endpoints.Register)
 	listener, err := net.Listen("tcp", cfg.HTTPAddr)
 	if err != nil {
