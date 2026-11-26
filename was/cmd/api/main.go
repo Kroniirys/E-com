@@ -10,7 +10,13 @@ import (
 
 	"ecommerce.local/base/internal/config"
 	"ecommerce.local/base/internal/database"
+	"ecommerce.local/base/internal/httpapi"
 	"ecommerce.local/base/internal/httpserver"
+	"ecommerce.local/base/internal/modules/auth"
+	"ecommerce.local/base/internal/modules/catalog"
+	"ecommerce.local/base/internal/modules/inventory"
+	"ecommerce.local/base/internal/modules/users"
+	"ecommerce.local/base/internal/platform/limit"
 	appRuntime "ecommerce.local/base/internal/runtime"
 )
 
@@ -23,6 +29,17 @@ func run() int {
 		log.Error("configuration rejected", "error", err.Error())
 		return 1
 	}
+	security, err := config.LoadSecurity(os.Getenv, cfg.Environment)
+	if err != nil {
+		log.Error("security configuration rejected", "error", err.Error())
+		return 1
+	}
+	redisLimiter, err := limit.New(security.RedisURL, security.RatePrefix)
+	if err != nil {
+		log.Error("Redis configuration rejected")
+		return 1
+	}
+	defer redisLimiter.Client.Close()
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	dbCtx, cancel := context.WithTimeout(ctx, cfg.DBTimeout)
@@ -34,7 +51,13 @@ func run() int {
 	}
 	pool, _ := db.DB()
 	defer pool.Close()
-	server := httpserver.New(cfg, db, log)
+	authService, err := auth.New(db, security.Secret, redisLimiter)
+	if err != nil {
+		log.Error("authentication initialization failed")
+		return 1
+	}
+	endpoints := &httpapi.API{Auth: authService, Users: users.New(db), Catalog: catalog.New(db), Inventory: inventory.New(db), Origins: cfg.AllowedOrigins, SecureCookie: security.SecureCookie}
+	server := httpserver.New(cfg, db, log, endpoints.Register)
 	listener, err := net.Listen("tcp", cfg.HTTPAddr)
 	if err != nil {
 		log.Error("HTTP listener unavailable")

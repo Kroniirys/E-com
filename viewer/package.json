@@ -17,7 +17,9 @@
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "format": "prettier --write src e2e *.config.ts",
+    "format:check": "prettier --check src e2e *.config.ts"
   },
   "dependencies": {
     "react": "19.3.1",
@@ -40,6 +42,7 @@
     "globals": "17.14.0",
     "jsdom": "31.0.1",
     "openapi-typescript": "7.13.0",
+    "prettier": "3.10.1",
     "swagger-ui-dist": "5.36.0",
     "tailwindcss": "4.3.5",
     "typescript": "5.9.3",

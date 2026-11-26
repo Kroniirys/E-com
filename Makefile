@@ -40,4 +40,5 @@ test-db-down:
 	docker compose --env-file .env.example --profile test stop postgres-test
 
 test-e2e: build
+	$(MAKE) -C was GO="$(GO)" test-helper
 	python3 scripts/run-e2e.py

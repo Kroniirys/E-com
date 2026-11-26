@@ -40,3 +40,7 @@ test-integration:
 
 reset-test:
 	APP_ENV=test DATABASE_URL="$(TEST_DATABASE_URL)" ALLOW_TEST_RESET="$(ALLOW_TEST_RESET)" $(GO) run ./cmd/migrate down-one
+
+.PHONY: test-helper
+test-helper:
+	CGO_ENABLED=0 $(GO) build -trimpath -o bin/testscope ./cmd/testscope
