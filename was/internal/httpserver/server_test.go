@@ -74,6 +74,7 @@ func TestOpenAPIIsValidJSONAndMatchesPhaseOneRoutes(t *testing.T) {
 	var spec struct {
 		Paths map[string]map[string]struct {
 			Implemented bool `json:"x-implemented"`
+			Phase       int  `json:"x-phase"`
 		}
 	}
 	if err := json.Unmarshal(w.Body.Bytes(), &spec); err != nil {
@@ -82,7 +83,7 @@ func TestOpenAPIIsValidJSONAndMatchesPhaseOneRoutes(t *testing.T) {
 	implemented := 0
 	for _, methods := range spec.Paths {
 		for _, op := range methods {
-			if op.Implemented {
+			if op.Implemented && op.Phase == 1 {
 				implemented++
 			}
 		}

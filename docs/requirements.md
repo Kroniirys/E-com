@@ -1,6 +1,6 @@
 # Yêu cầu E-commerce Base
 
-Nguồn: [plan tổng](../plans/00-master-plan.md). Lệnh triển khai Phase 01 của chủ dự án là phạm vi thực thi hiện tại. Các lựa chọn đơn giản hóa dưới đây là quyết định triển khai theo phương án đã đề xuất trong plan, không phải yêu cầu mới được suy ra từ mã nguồn.
+Nguồn: [plan tổng](../plans/00-master-plan.md). Lệnh triển khai Phase 01 và Phase 02 của chủ dự án là phạm vi đã thực thi hiện tại. Các lựa chọn đơn giản hóa dưới đây là quyết định triển khai theo phương án đã đề xuất trong plan, không phải yêu cầu mới được suy ra từ mã nguồn.
 
 ## Phạm vi và truy vết
 
@@ -39,4 +39,4 @@ Nguồn: [plan tổng](../plans/00-master-plan.md). Lệnh triển khai Phase 01
 
 Không commit/log secret, password, token hoặc địa chỉ đầy đủ. Quyền/ownership kiểm tra tại server. Chặn mass assignment và SQL sort tùy ý. Seed demo không tự ghi đè dữ liệu người dùng. Script reset chỉ dành DB test có guard.
 
-Chưa triển khai chức năng Phase 02 trở đi trong Phase 01. Endpoint tương lai được đánh dấu rõ trong OpenAPI và trả 404 nếu gọi trước khi được triển khai. Không dùng mock dữ liệu để thay chức năng thật.
+Đến Phase 02, AUTH-01, USER-01, CAT-01 và phần adjustment/history của INV-01 đã triển khai và kiểm chứng. ADM-01 có CRUD user/catalog/inventory; dashboard tổng hợp và giao dịch checkout chưa thuộc phase này. OPS-01 đã có Redis rate limit và hành vi lỗi dịch vụ; cache/metrics/load test còn ở phase sau. Xem [bằng chứng](PROGRESS.md). Endpoint Phase 03 trở đi được đánh dấu tương lai trong OpenAPI và chưa đăng ký. Không dùng mock dữ liệu để thay chức năng thật.

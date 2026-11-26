@@ -1,0 +1,12 @@
+DROP TABLE idempotency_records;
+DROP TABLE inventory_transactions;
+DROP TABLE inventory;
+DROP TABLE product_categories;
+DROP TABLE product_images;
+DROP TABLE products;
+DROP TABLE categories;
+DROP TABLE user_addresses;
+DROP TABLE refresh_tokens;
+DROP TABLE auth_sessions;
+DROP TABLE users;
+DROP TABLE roles;

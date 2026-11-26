@@ -34,3 +34,12 @@ Các quyết định này là lựa chọn triển khai cho Base dựa trên ph�
 ## Điểm mở
 
 Phase 01 không có blocker thiết kế cho auth/catalog. Trước Phase 05 phải chốt TTL/retry/retention theo thử nghiệm tải, event versioning và concurrency cụ thể. Các giá trị kỹ thuật nêu ở đây là chính sách khởi điểm, không là cam kết hiệu năng. Chủ dự án có thể thay quyết định phạm vi trước module liên quan.
+
+## Bổ sung Phase 02
+
+- ADR-019: mật khẩu tối thiểu 12 Unicode code points và tối đa 72 byte UTF-8; BE/UI/OpenAPI/seed dùng cùng quy tắc. Không chuẩn hóa nội dung password.
+- ADR-020: auth_sessions lưu family/version/expiry/revoked_at; refresh_tokens giữ hash và lịch sử sử dụng. Replay commit việc revoke trước khi trả401, không rollback cùng lỗi xác thực.
+- ADR-021: serialize thay đổi tập Admin bằng khóa row roles.Admin rồi user; giữ ít nhất một Admin Active chưa soft-delete. Không cascade xóa user đã có lịch sử.
+- ADR-022: module catalog sở hữu product/category/images/assignment trong một transaction; inventory có nguồn quantity riêng. Product mới tạo stock0, mọi delta có audit/idempotency.
+- ADR-023: client dùng SessionRuntime external store, token memory, Web Locks + BroadcastChannel. Mỗi request chụp auth epoch; thay epoch thì không refresh/replay/clear hoặc publish response của intent cũ.
+- ADR-024: E2E tạo schema test riêng và prefix Redis riêng, sinh secret tạm, cleanup sau chạy; không dùng hoặc sửa dữ liệu demo development để vượt test.

@@ -1,18 +1,22 @@
 # Hạn chế và việc chưa kiểm chứng
 
-## Docker được tạm hoãn theo yêu cầu người dùng
+## Docker tạm hoãn theo yêu cầu người dùng
 
-Yêu cầu mới nhất cho phép tạm thời chưa kiểm tra Docker; phần này không chặn công việc tách WAS/Viewer. Không chạy lại Docker/Compose trong lượt cơ cấu lại.
+Phase 01/02 đã kiểm chứng native trên PostgreSQL, Redis và Chrome thật. Không chạy kiểm tra Docker trong Phase 02. Chưa có bằng chứng runtime image/Compose, Nginx/container network hoặc volume restart của cấu trúc hiện tại. Khi tiếp tục kiểm chứng Docker, chạy clean-start trong README và lưu evidence riêng; không dùng kết quả native thay thế.
 
-Mã nguồn Phase 01 đã build và kiểm chứng native trên PostgreSQL/Chrome thật; cấu hình Compose hợp lệ. Chưa kiểm chứng chạy thực tế image/stack bằng Compose vì không có quyền Docker daemon. Rootless cũng thiếu uidmap/subuid/subgid; không có quyền cài/sửa cấu hình hệ thống trong phiên này.
+## Phạm vi còn lại
 
-Ảnh hưởng: chưa đủ bằng chứng nghiệm thu tiêu chí API/viewer/PostgreSQL chạy qua Compose, chưa xác nhận runtime Nginx/container network/volume restart. Native E2E và manifest image hợp lệ không thay thế kiểm tra này. Xem [progress](PROGRESS.md) và README để chạy lại khi có môi trường.
+- Phase 03–06 chưa triển khai: cart/checkout/order/payment/coupon/review/cache catalog/events/notification/dashboard tổng hợp và nghiệm thu toàn hệ thống. API tương lai trả 404.
+- Worker chỉ bootstrap DB/schema rồi chờ shutdown; chưa consume message.
+- Ảnh lưu metadata/URL HTTP(S), chưa upload hoặc backend-fetch. Trình duyệt cần truy cập được nguồn ảnh.
+- Không có payment gateway tiền thật, refund, biến thể, nhiều kho/nhiều người bán hoặc triển khai public trong Base.
 
-## Giới hạn phạm vi chủ đích
+## Lưu ý vận hành hiện tại
 
-- Chỉ Phase 01 đã có mã nguồn. Auth/catalog/cart/order/payment/coupon/review/cache/events/notification là thiết kế cho phase sau; endpoint đó chưa đăng ký và trả 404.
-- Worker hiện bootstrap DB/schema/seed và shutdown, chưa consume message.
-- Chưa có tài khoản demo nghiệp vụ trước Phase 02; seed hiện là cấu hình cửa hàng thật.
-- Không upload file, payment gateway, refund, biến thể, nhiều kho, nhiều người bán hoặc deployment public trong Base.
-- Local credentials trong .env.example là mẫu, không là secret dùng cho môi trường khác. Seed chỉ cho development/test, không ghi đè dữ liệu đã có.
-- UI trạng thái không tự polling; dùng nút kiểm tra lại khi dependency phục hồi. Swagger local dùng đường dẫn file rõ ràng để chạy được cả Vite và Nginx.
+- API không tin X-Forwarded-For mặc định. Qua Vite/Nginx local, người dùng có thể chung IP rate limit; trước triển khai qua reverse proxy cần cấu hình trust boundary cụ thể và kiểm chứng chống giả IP.
+- Web Locks bảo vệ refresh nhiều tab trên trình duyệt hỗ trợ. Nếu thiếu Web Locks và xảy ra refresh replay, server vẫn revoke family; người dùng cần đăng nhập lại.
+- Refresh cookie Secure ngoài development/test; cấu hình Origin và HTTPS phải khớp khi triển khai. Access token nằm trong memory, không lưu localStorage.
+- `scripts/setup-local.py` tạo secret và demo password local, không ghi đè `.env`. Seed chỉ dành development/test, chạy lại không sửa tài khoản hoặc stock đã có. Không dùng tài khoản demo ở môi trường public.
+- Cơ sở dữ liệu schema v2 bắt buộc trước app hiện tại. Rollback schema chỉ trên test có kiểm soát; dữ liệu cần giữ ưu tiên backup/migration sửa tiến.
+
+Xem [tiến độ và bằng chứng](PROGRESS.md), [review Phase 02](review-phase-02.md).

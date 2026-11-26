@@ -1,0 +1,158 @@
+import { test, expect } from '@playwright/test'
+
+test('Phase 02: admin CRUD và tồn kho, customer profile, session nhiều tab', async ({
+  page,
+  context,
+  request,
+}) => {
+  test.setTimeout(120000)
+  const suffix = process.env.APP_VERSION!.slice(-8)
+  const categoryName = `Bộ sưu tập ${suffix}`
+  const productName = `Đèn E2E ${suffix}`
+  const sku = `E2E-${suffix}`.toUpperCase()
+  const email = `customer-${suffix}@e2e.test`
+  const password = 'E2E-browser-customer-123'
+  const output = process.env.E2E_EVIDENCE_DIR!
+  const login = async (address: string, secret: string) => {
+    await page.goto('/#/login')
+    await page.getByLabel('Email', { exact: true }).fill(address)
+    await page.getByLabel('Mật khẩu', { exact: true }).fill(secret)
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click()
+  }
+  await login(process.env.SEED_ADMIN_EMAIL!, process.env.SEED_ADMIN_PASSWORD!)
+  await expect(page.getByRole('heading', { name: 'Quản lý cửa hàng' })).toBeVisible()
+  await page
+    .getByRole('navigation', { name: 'Quản trị cửa hàng' })
+    .getByRole('link', { name: 'Danh mục', exact: true })
+    .click()
+  await page.getByRole('button', { name: 'Tạo danh mục' }).click()
+  await page.getByLabel('Tên danh mục', { exact: true }).fill(categoryName)
+  await page.getByLabel(/^Đường dẫn danh mục/).fill(`collection-${suffix}`)
+  await page.getByRole('button', { name: 'Lưu danh mục' }).click()
+  await expect(page.getByRole('cell', { name: categoryName, exact: true })).toBeVisible()
+  await page
+    .getByRole('navigation', { name: 'Quản trị cửa hàng' })
+    .getByRole('link', { name: 'Sản phẩm', exact: true })
+    .click()
+  await page.getByRole('button', { name: 'Tạo sản phẩm' }).click()
+  await page.getByLabel('Tên sản phẩm', { exact: true }).fill(productName)
+  await page.getByLabel('Mã SKU', { exact: true }).fill(sku)
+  await page.getByLabel('Giá bán (VND)', { exact: true }).fill('123000')
+  await page.getByLabel('Giá gốc (VND)', { exact: true }).fill('145000')
+  await page.getByLabel('Trạng thái sản phẩm', { exact: true }).selectOption('Active')
+  await page.getByLabel(/^Danh mục sản phẩm/).selectOption({ label: categoryName })
+  await page
+    .getByLabel('Mô tả', { exact: true })
+    .fill('Sản phẩm được tạo qua UI và đọc lại từ PostgreSQL thật.')
+  await page.getByRole('button', { name: 'Thêm ảnh URL' }).click()
+  await page
+    .getByLabel('URL ảnh 1', { exact: true })
+    .fill('http://127.0.0.1:5173/api-docs/favicon-32x32.png')
+  await page.getByLabel('Mô tả ảnh 1', { exact: true }).fill('Ảnh kiểm thử local')
+  await page.getByRole('button', { name: 'Lưu sản phẩm' }).click()
+  const productRow = page.getByRole('row').filter({ hasText: productName })
+  await expect(productRow).toBeVisible()
+  await productRow.getByRole('button', { name: 'Sửa', exact: true }).click()
+  await page.getByLabel('Giá bán (VND)', { exact: true }).fill('150000')
+  await page.getByRole('button', { name: 'Lưu sản phẩm' }).click()
+  await expect(page.getByText('Đã lưu sản phẩm.', { exact: true })).toBeVisible()
+  await page.screenshot({ path: `${output}/admin-products.png`, fullPage: true })
+  await page
+    .getByRole('navigation', { name: 'Quản trị cửa hàng' })
+    .getByRole('link', { name: 'Tồn kho', exact: true })
+    .click()
+  await page
+    .getByRole('row')
+    .filter({ hasText: productName })
+    .getByRole('button', { name: 'Điều chỉnh & lịch sử' })
+    .click()
+  const panel = page.getByRole('region', { name: 'Điều chỉnh tồn kho' })
+  await panel.getByLabel(/^Số lượng điều chỉnh/).fill('5')
+  await panel.getByLabel('Lý do điều chỉnh').fill('E2E nhập hàng')
+  await panel.getByRole('button', { name: 'Áp dụng điều chỉnh' }).click()
+  await expect(panel.getByText('Đã điều chỉnh tồn kho và ghi lịch sử.')).toBeVisible()
+  await expect(panel.getByRole('row').filter({ hasText: 'E2E nhập hàng' })).toContainText('0 → 5')
+  await panel.getByLabel(/^Số lượng điều chỉnh/).fill('-2')
+  await panel.getByLabel('Lý do điều chỉnh').fill('E2E giảm tồn')
+  await panel.getByRole('button', { name: 'Áp dụng điều chỉnh' }).click()
+  await expect(panel.getByRole('row').filter({ hasText: 'E2E giảm tồn' })).toContainText('5 → 3')
+  await page
+    .getByRole('navigation', { name: 'Quản trị cửa hàng' })
+    .getByRole('link', { name: 'Người dùng', exact: true })
+    .click()
+  await page
+    .getByRole('row')
+    .filter({ hasText: process.env.SEED_ADMIN_EMAIL! })
+    .getByRole('button', { name: 'Sửa', exact: true })
+    .click()
+  await page.getByLabel('Vai trò', { exact: true }).selectOption('Customer')
+  await page.getByRole('button', { name: 'Lưu người dùng' }).click()
+  await expect(page.getByRole('alert')).toContainText('Cần giữ ít nhất một quản trị viên')
+  await page.getByRole('button', { name: 'Hủy', exact: true }).click()
+  await page.getByRole('button', { name: 'Đăng xuất', exact: true }).click()
+  await expect(page.getByRole('link', { name: 'Đăng ký', exact: true })).toBeVisible()
+  await page.getByRole('link', { name: 'Đăng ký', exact: true }).click()
+  await page.getByLabel('Họ và tên', { exact: true }).fill('Khách hàng E2E')
+  await page.getByLabel('Email', { exact: true }).fill(email)
+  await page.getByLabel(/^Mật khẩu/).fill(password)
+  await page.getByRole('button', { name: 'Tạo tài khoản', exact: true }).click()
+  await expect(page.getByRole('link', { name: 'Tài khoản', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Quản trị', exact: true })).toHaveCount(0)
+  await page.getByRole('link', { name: 'Tài khoản', exact: true }).click()
+  await page.getByLabel('Họ và tên', { exact: true }).fill('Khách E2E đã cập nhật')
+  await page.getByRole('button', { name: 'Lưu hồ sơ' }).click()
+  await expect(page.getByText('Đã cập nhật thông tin cá nhân.')).toBeVisible()
+  await page.getByRole('button', { name: 'Thêm địa chỉ' }).click()
+  await page.getByLabel('Người nhận', { exact: true }).fill('Khách E2E')
+  await page.getByLabel('Số điện thoại', { exact: true }).fill('0901234567')
+  await page.getByLabel('Địa chỉ', { exact: true }).fill('Địa chỉ kiểm thử local')
+  await page.getByRole('checkbox', { name: 'Đặt làm địa chỉ mặc định' }).check()
+  await page.getByRole('button', { name: 'Lưu địa chỉ' }).click()
+  await expect(page.getByText('Địa chỉ kiểm thử local', { exact: true })).toBeVisible()
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Thông tin cá nhân', exact: true })).toBeVisible()
+  await expect(page.getByText('Địa chỉ kiểm thử local', { exact: true })).toBeVisible()
+  await page.getByRole('link', { name: 'Cửa hàng', exact: true }).click()
+  await page.getByLabel('Tìm sản phẩm', { exact: true }).fill(productName)
+  await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click()
+  await page.getByLabel('Danh mục', { exact: true }).selectOption({ label: categoryName })
+  await expect(page.getByRole('heading', { name: productName, exact: true })).toBeVisible()
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await page.screenshot({ path: `${output}/storefront.png`, fullPage: true })
+  await page.setViewportSize({ width: 375, height: 812 })
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+  ).toBeTruthy()
+  await page.screenshot({ path: `${output}/storefront-mobile.png`, fullPage: true })
+  await page.getByRole('heading', { name: productName, exact: true }).click()
+  await expect(page.getByText('Còn 3 sản phẩm trong kho.', { exact: true })).toBeVisible()
+  await expect(page.getByText('150.000 ₫', { exact: true })).toBeVisible()
+  const publicProducts = await request.get(`/api/v1/products?q=${encodeURIComponent(productName)}`)
+  expect(publicProducts.ok()).toBeTruthy()
+  const result = await publicProducts.json()
+  expect(result.data.items[0]).toMatchObject({ sku, stock: 3, price_minor: 150000 })
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  const second = await context.newPage()
+  await second.goto('/#/account')
+  await expect(
+    second.getByRole('heading', { name: 'Thông tin cá nhân', exact: true }),
+  ).toBeVisible()
+  await Promise.all([page.reload(), second.reload()])
+  await expect(
+    second.getByRole('heading', { name: 'Thông tin cá nhân', exact: true }),
+  ).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Tài khoản', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Đăng xuất', exact: true }).click()
+  await expect(
+    second.getByRole('heading', { name: 'Bạn cần đăng nhập', exact: true }),
+  ).toBeVisible()
+  await second.close()
+  await login(email, password)
+  await page.getByRole('link', { name: 'Tài khoản', exact: true }).click()
+  await page.getByLabel('Mật khẩu hiện tại', { exact: true }).fill(password)
+  await page.getByLabel(/^Mật khẩu mới/).fill('Changed-E2E-password-123')
+  await page.getByRole('button', { name: 'Đổi mật khẩu', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Đăng nhập', exact: true })).toBeVisible()
+  await login(email, 'Changed-E2E-password-123')
+  await expect(page.getByRole('link', { name: 'Tài khoản', exact: true })).toBeVisible()
+})

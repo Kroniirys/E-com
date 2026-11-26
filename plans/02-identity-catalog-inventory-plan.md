@@ -3,10 +3,10 @@ title: "Phase 02 — Tài khoản, danh mục và tồn kho"
 artifact: implementation-plan
 role: fullstack
 status: draft
-version: 0.2
-owner: "TBD"
+version: 0.3
+owner: "datnguyen <dat01687241584@gmail.com>"
 approvers: []
-last_updated: 2026-11-25
+last_updated: 2026-11-26
 ---
 
 # Phase 02 — Tài khoản, danh mục và tồn kho
@@ -23,8 +23,8 @@ Customer đăng ký/đăng nhập/profile/address và duyệt hàng. Admin quả
 
 ### P02-01 — Schema và seed
 
-- Phạm vi file: `was/migrations/`, `was/scripts/seed/`, repositories auth/users/products/categories/inventory.
-- Thực hiện: users/roles/refresh_tokens/user_addresses, products/product_images/categories/product_categories, inventory/inventory_transactions theo ERD.
+- Phạm vi file: `was/migrations/`, `was/internal/bootstrap/`, repositories auth/users/products/categories/inventory.
+- Thực hiện: users/roles/auth_sessions/refresh_tokens/user_addresses, products/product_images/categories/product_categories, inventory/inventory_transactions theo ERD.
 - Ràng buộc email/SKU unique và normalize nhất quán; stock không âm, giá hợp lệ, FK/index; inventory là nguồn stock duy nhất.
 - Seed admin/customer và catalog đủ Draft/Active/Inactive/hết hàng, lấy thông tin tài khoản demo từ cấu hình local.
 - Kiểm tra: DB trống và DB Phase 01 migrate được, seed lặp không trùng và không ghi đè dữ liệu nghiệp vụ cần giữ.
@@ -32,7 +32,7 @@ Customer đăng ký/đăng nhập/profile/address và duyệt hàng. Admin quả
 
 ### P02-02 — Auth, session, RBAC và rate limit
 
-- Phạm vi file: `was/internal/modules/auth/`, `was/internal/middleware/`, Redis config.
+- Phạm vi file: `was/internal/modules/auth/`, `was/internal/httpapi/`, Redis config.
 - Thực hiện: register/login/refresh/logout/change-password/me; bcrypt theo tham số ghi decision log; validate và giới hạn đầu vào.
 - JWT kiểm tra thuật toán/signature/expiry. Refresh token ngẫu nhiên lưu hash trong DB, rotation nguyên tử, phát hiện reuse; khóa tài khoản/đổi mật khẩu thu hồi session và chặn access theo chính sách đã thiết kế.
 - Customer không tự cấp role Admin. Chặn vô hiệu hóa admin hoạt động cuối cùng.
@@ -50,7 +50,7 @@ Customer đăng ký/đăng nhập/profile/address và duyệt hàng. Admin quả
 
 ### P02-04 — Catalog và tìm kiếm
 
-- Phạm vi file: `was/internal/modules/products/`, `was/internal/modules/categories/`.
+- Phạm vi file: `was/internal/modules/catalog/` (product/category dùng chung transaction).
 - Thực hiện: admin CRUD product/category; public list/detail; SKU, ảnh URL, giá bán/giá gốc, mô tả và trạng thái. Out of stock được suy ra từ inventory.
 - Search/filter category/sort/pagination có allowlist và giới hạn; không đưa raw input vào SQL. Draft/Inactive không lộ ở public; Active hết hàng vẫn xem được.
 - Archive/soft delete giữ tham chiếu; category delete không tạo orphan/FK lỗi. Validate URL và không để server tự fetch URL ngoài nếu chưa kiểm soát SSRF.
@@ -89,18 +89,26 @@ Không hard delete user/product đã có quan hệ nghiệp vụ. Inventory hist
 
 ## 5. Tiêu chí hoàn thành
 
-- [ ] Customer/admin dùng UI thật với đúng quyền và session policy.
-- [ ] Profile/address/user CRUD/status và ownership có kiểm chứng.
-- [ ] Product/category/search/filter/sort/pagination/status/ảnh dùng dữ liệu thật.
-- [ ] Stock không âm, adjustment không trùng và history đối chiếu được.
-- [ ] Redis rate limit và hành vi khi Redis lỗi được kiểm chứng.
-- [ ] Build/unit/integration/E2E đạt và docs/evidence cập nhật.
+- [x] Customer/admin dùng UI thật với đúng quyền và session policy.
+- [x] Profile/address/user CRUD/status và ownership có kiểm chứng.
+- [x] Product/category/search/filter/sort/pagination/status/ảnh dùng dữ liệu thật.
+- [x] Stock không âm, adjustment không trùng và history đối chiếu được.
+- [x] Redis rate limit và hành vi khi Redis lỗi được kiểm chứng.
+- [x] Build/unit/integration/E2E đạt và docs/evidence cập nhật.
 
 ## 6. Checklist review
 
-- [ ] UI và API contract khớp, đã truy vết call site/error path.
-- [ ] Không lọt quyền, token, secret hoặc dữ liệu user nhạy cảm.
-- [ ] Migration, race, idempotency, seed và rollback được kiểm tra.
-- [ ] Không báo cart/checkout/cache catalog đã hoàn thiện.
+- [x] UI và API contract khớp, đã truy vết call site/error path.
+- [x] Không lọt quyền, token, secret hoặc dữ liệu user nhạy cảm.
+- [x] Migration, race, idempotency, seed và rollback được kiểm tra.
+- [x] Không báo cart/checkout/cache catalog đã hoàn thiện.
 
 Tiếp theo: [Phase 03](03-cart-orders-payments-plan.md).
+
+## Implementation Result
+
+### Lần 1 (2026-11-26)
+
+Đã hoàn thành P02-01–07 trên native PostgreSQL/Redis/Chrome, có review độc lập và sửa lặp. Schema v2, auth/session/RBAC, users/address, catalog và inventory có UI/API chạy thật. Contract 62 operations, 36 đã hiện thực; phần còn lại dành phase sau. Status `draft` giữ nguyên, checkbox thể hiện kết quả triển khai, không phải phê duyệt tài liệu.
+
+Kiểm chứng: 10 Go unit tests dưới race detector, Go vet, 12 integration tests, 9 Viewer unit/component tests, OpenAPI/lint/typecheck/build và 2 browser E2E đều đạt. [Progress/evidence](../docs/PROGRESS.md), [review](../docs/review-phase-02.md), [checklist thực thi](../docs/phase-02-execution.md). Docker tạm hoãn theo yêu cầu chủ dự án. Phase 03 chưa bắt đầu.

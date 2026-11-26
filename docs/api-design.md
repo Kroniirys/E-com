@@ -1,6 +1,6 @@
 # Thiết kế API
 
-Nguồn chuẩn máy đọc: [openapi.yaml](../was/api/openapi.yaml). Đây là JSON hợp lệ trong cú pháp YAML để cả Go embed và tool frontend dùng trực tiếp. Contract toàn Base được chia `x-phase` và `x-implemented`; Phase 01 chỉ hiện thực foundation/health/spec, endpoint nghiệp vụ chưa triển khai trả 404.
+Nguồn chuẩn máy đọc: [openapi.yaml](../was/api/openapi.yaml). Đây là JSON hợp lệ trong cú pháp YAML để cả Go embed và tool frontend dùng trực tiếp. Contract toàn Base được chia `x-phase` và `x-implemented`; Phase 01–02 hiện thực foundation/auth/users/catalog/inventory; chỉ các endpoint phase sau chưa triển khai trả404.
 
 ## Quy ước
 
@@ -34,3 +34,11 @@ Public đọc catalog/review visible. Customer chỉ đọc/sửa profile/addres
 ## Contract kiểm chứng
 
 OpenAPI validation và generation TypeScript chạy qua `make contract`. Phase 01 client foundation lấy type từ generated schema, không tự định nghĩa response khác. Backend chỉ đăng ký endpoint đã triển khai. Swagger UI local hiển thị đánh dấu endpoint planned trong mô tả; tài liệu tồn tại không đồng nghĩa tính năng đã có.
+
+## Hiện thực Phase 02
+
+Có36 operations đã hiện thực (4 Phase01 +32 Phase02), gồm GET admin/products/{id} cho cả Draft/Inactive. Inventory list thêm product_name/sku đọc từ catalog; adjustment response vẫn có product_id/quantity/version. Tất cả input JSON từ chối unknown field, null cho field bắt buộc và payload ngoài giới hạn; không nhận stock qua product update hoặc role/status qua profile/register.
+
+Password min12 Unicode characters/max72 UTF-8 bytes; email trim/lowercase, SKU trim/uppercase. Các cookie mutation yêu cầu trusted Origin; public đọc catalog không cần phiên. Hạn mức trả429 + Retry-After, Redis lỗi trả503. User role/status/session_version được đọc lại cho protected request.
+
+Page 1–100000, page_size1–100; sort users chỉ created_at/name/email, product chỉ created_at/name/price_asc/price_desc. q tối đa200 ký tự và %/_/backslash được tìm như ký tự literal. Hết hàng suy ra từ inventory; admin CRUD dùng soft-delete/archive, không mất stock history.

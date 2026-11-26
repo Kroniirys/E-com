@@ -1,0 +1,20 @@
+?   	ecommerce.local/base/api	[no test files]
+?   	ecommerce.local/base/cmd/api	[no test files]
+?   	ecommerce.local/base/cmd/healthcheck	[no test files]
+?   	ecommerce.local/base/cmd/migrate	[no test files]
+?   	ecommerce.local/base/cmd/seed	[no test files]
+?   	ecommerce.local/base/cmd/testscope	[no test files]
+?   	ecommerce.local/base/cmd/worker	[no test files]
+?   	ecommerce.local/base/internal/bootstrap	[no test files]
+ok  	ecommerce.local/base/internal/config	1.008s
+?   	ecommerce.local/base/internal/database	[no test files]
+?   	ecommerce.local/base/internal/httpapi	[no test files]
+ok  	ecommerce.local/base/internal/httpserver	1.028s
+?   	ecommerce.local/base/internal/modules/auth	[no test files]
+ok  	ecommerce.local/base/internal/modules/catalog	1.012s
+?   	ecommerce.local/base/internal/modules/inventory	[no test files]
+ok  	ecommerce.local/base/internal/modules/users	1.012s
+?   	ecommerce.local/base/internal/platform/limit	[no test files]
+?   	ecommerce.local/base/internal/platform/problem	[no test files]
+ok  	ecommerce.local/base/internal/runtime	1.044s
+ok  	ecommerce.local/base/migrations	1.007s
