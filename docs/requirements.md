@@ -1,6 +1,6 @@
 # Yêu cầu E-commerce Base
 
-Nguồn: [plan tổng](../plans/00-master-plan.md). Lệnh triển khai Phase 01 của chủ dự án là phạm vi thực thi hiện tại. Các lựa chọn đơn giản hóa dưới đây là quyết định triển khai theo phương án đã đề xuất trong plan, không phải yêu cầu mới được suy ra từ mã nguồn.
+Nguồn: [plan tổng](../plans/00-master-plan.md). Lệnh triển khai Phase 01–03 của chủ dự án là phạm vi đã thực thi hiện tại. Các lựa chọn đơn giản hóa dưới đây là quyết định triển khai theo phương án đã đề xuất trong plan, không phải yêu cầu mới được suy ra từ mã nguồn.
 
 ## Phạm vi và truy vết
 
@@ -39,4 +39,8 @@ Nguồn: [plan tổng](../plans/00-master-plan.md). Lệnh triển khai Phase 01
 
 Không commit/log secret, password, token hoặc địa chỉ đầy đủ. Quyền/ownership kiểm tra tại server. Chặn mass assignment và SQL sort tùy ý. Seed demo không tự ghi đè dữ liệu người dùng. Script reset chỉ dành DB test có guard.
 
-Chưa triển khai chức năng Phase 02 trở đi trong Phase 01. Endpoint tương lai được đánh dấu rõ trong OpenAPI và trả 404 nếu gọi trước khi được triển khai. Không dùng mock dữ liệu để thay chức năng thật.
+Đến Phase 02, AUTH-01, USER-01, CAT-01 và phần adjustment/history của INV-01 đã triển khai và kiểm chứng. ADM-01 có CRUD user/catalog/inventory; dashboard tổng hợp ở phase sau, checkout có ở Phase 03. OPS-01 đã có Redis rate limit và hành vi lỗi dịch vụ; cache/metrics/load test còn ở phase sau. Xem [bằng chứng](PROGRESS.md). Endpoint Phase 04 trở đi được đánh dấu tương lai trong OpenAPI và chưa đăng ký. Không dùng mock dữ liệu để thay chức năng thật.
+
+## Kết quả Phase 03
+
+CART-01, ORD-01, PAY-01 và phần checkout/cancel của INV-01 đã hiện thực. ADM-01 bổ sung list/detail và lifecycle order; ASY-01 có outbox cùng transaction, chưa publish/consume. SQL concurrency chứng minh 20 khách tranh stock5 chỉ tạo5đơn; payment success đồng thời chỉ1Paid; cancel/replay không hoàn/trừ lặp. Browser đi qua COD/Delivered và mock Failure→retry→Paid, gồm mất response/reload/khôi phục. [Progress và evidence](PROGRESS.md).

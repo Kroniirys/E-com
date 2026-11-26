@@ -9,12 +9,12 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-
 	"ecommerce.local/base/api"
 	"ecommerce.local/base/internal/config"
 	"ecommerce.local/base/internal/database"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 var validRequestID = regexp.MustCompile(`^[A-Za-z0-9_-]{1,64}$`)
@@ -24,16 +24,16 @@ type dependencies struct {
 	store func(context.Context) (database.StoreSettings, error)
 }
 
-func New(c config.Config, db *gorm.DB, log *slog.Logger) *http.Server {
+func New(c config.Config, db *gorm.DB, log *slog.Logger, registrations ...func(*gin.Engine)) *http.Server {
 	deps := dependencies{ready: func(ctx context.Context) error { return database.CheckReady(ctx, db) }, store: func(ctx context.Context) (database.StoreSettings, error) { return database.Store(ctx, db) }}
-	return &http.Server{Addr: c.HTTPAddr, Handler: router(c, deps, log), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: c.RequestTimeout + 5*time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 1 << 20}
+	return &http.Server{Addr: c.HTTPAddr, Handler: router(c, deps, log, registrations...), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: c.RequestTimeout + 5*time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 1 << 20}
 }
 
 func failure(c *gin.Context, status int, code, message string) {
 	c.AbortWithStatusJSON(status, gin.H{"error": gin.H{"code": code, "message": message, "request_id": c.GetString("request_id")}})
 }
 
-func router(cfg config.Config, deps dependencies, log *slog.Logger) *gin.Engine {
+func router(cfg config.Config, deps dependencies, log *slog.Logger, registrations ...func(*gin.Engine)) *gin.Engine {
 	r := gin.New()
 	r.HandleMethodNotAllowed = true
 	_ = r.SetTrustedProxies(nil)
@@ -67,7 +67,7 @@ func router(cfg config.Config, deps dependencies, log *slog.Logger) *gin.Engine 
 			if path == "" {
 				path = "unmatched"
 			}
-			log.Info("http request", "request_id", id, "method", c.Request.Method, "route", path, "status", c.Writer.Status(), "duration_ms", time.Since(start).Milliseconds())
+			log.Info("http request", "request_id", id, "method", c.Request.Method, "route", path, "status", c.Writer.Status(), "order_id", c.GetString("order_id"), "attempt_id", c.GetString("attempt_id"), "error_code", c.GetString("error_code"), "duration_ms", time.Since(start).Milliseconds())
 		}()
 		c.Next()
 	})
@@ -124,6 +124,9 @@ func router(cfg config.Config, deps dependencies, log *slog.Logger) *gin.Engine 
 		c.JSON(200, gin.H{"data": gin.H{"service": "ecommerce-api", "version": cfg.Version, "environment": cfg.Environment, "database": "up", "schema_version": database.SchemaVersion, "store": store}})
 	})
 	r.GET("/openapi.json", func(c *gin.Context) { c.Data(200, "application/json; charset=utf-8", api.OpenAPI) })
+	for _, register := range registrations {
+		register(r)
+	}
 	r.NoRoute(func(c *gin.Context) { failure(c, 404, "NOT_FOUND", "Endpoint is not available") })
 	r.NoMethod(func(c *gin.Context) { failure(c, 405, "METHOD_NOT_ALLOWED", "Method is not allowed") })
 	return r

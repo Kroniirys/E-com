@@ -34,3 +34,22 @@ Các quyết định này là lựa chọn triển khai cho Base dựa trên ph�
 ## Điểm mở
 
 Phase 01 không có blocker thiết kế cho auth/catalog. Trước Phase 05 phải chốt TTL/retry/retention theo thử nghiệm tải, event versioning và concurrency cụ thể. Các giá trị kỹ thuật nêu ở đây là chính sách khởi điểm, không là cam kết hiệu năng. Chủ dự án có thể thay quyết định phạm vi trước module liên quan.
+
+## Bổ sung Phase 02
+
+- ADR-019: mật khẩu tối thiểu 12 Unicode code points và tối đa 72 byte UTF-8; BE/UI/OpenAPI/seed dùng cùng quy tắc. Không chuẩn hóa nội dung password.
+- ADR-020: auth_sessions lưu family/version/expiry/revoked_at; refresh_tokens giữ hash và lịch sử sử dụng. Replay commit việc revoke trước khi trả401, không rollback cùng lỗi xác thực.
+- ADR-021: serialize thay đổi tập Admin bằng khóa row roles.Admin rồi user; giữ ít nhất một Admin Active chưa soft-delete. Không cascade xóa user đã có lịch sử.
+- ADR-022: module catalog sở hữu product/category/images/assignment trong một transaction; inventory có nguồn quantity riêng. Product mới tạo stock0, mọi delta có audit/idempotency.
+- ADR-023: client dùng SessionRuntime external store, token memory, Web Locks + BroadcastChannel. Mỗi request chụp auth epoch; thay epoch thì không refresh/replay/clear hoặc publish response của intent cũ.
+- ADR-024: E2E tạo schema test riêng và prefix Redis riêng, sinh secret tạm, cleanup sau chạy; không dùng hoặc sửa dữ liệu demo development để vượt test.
+
+## Bổ sung Phase 03
+
+- ADR-025: quote SHA-256 canonical gồm cart ID/version, product ID/version/quantity/price và currency/shipping. Server tính lại từ DB; hash không cấp quyền hoặc thay việc xác minh giá. Thay metadata/version cũng cần xác nhận lại snapshot.
+- ADR-026: cart tối đa 100 món, quantity 1–1000, tổng và từng line tối đa 9×10¹² VND. Giỏ chỉ hiển thị live availability; chưa reservation. Quote vượt miền tiền vẫn cho xóa món để phục hồi.
+- ADR-027: idempotency result tồn tại trong PostgreSQL cùng transaction, chưa tự dọn trong Base. Operation tách admin transition và customer transition; fingerprint gồm resource ID. Không replay snapshot admin qua scope customer khi bị hạ quyền.
+- ADR-028: checkout khóa idempotency → user NO KEY UPDATE → cart → products theo ID → inventory theo ID. NO KEY UPDATE tương thích FK KEY SHARE từ idempotency insert; địa chỉ được snapshot khi user đang khóa. Cart mutation không lấy user lock sau cart. Lifecycle/payment khóa order trước payment/attempt/stock.
+- ADR-029: transaction retry tối đa 3 lần, chỉ SQLSTATE 40001/40P01; không gọi mạng trong transaction. Không retry lỗi nghiệp vụ/constraint thành đơn mới. Giá, trạng thái, stock vẫn được đọc và kiểm lại.
+- ADR-030: Mock chỉ development/test, tối đa 5 attempts/order, một Pending và một Paid/payment nhờ partial unique index. Khi flag tắt không mount route attempt/simulate; production không cho bật. Failed attempt bất biến, tạo attempt mới để retry.
+- ADR-031: Viewer giữ intent chưa biết kết quả trong sessionStorage theo user/operation; token vẫn chỉ ở memory. Chỉ bỏ key khi success hoặc business rejection xác định; giữ qua lỗi mạng, 5xx, auth/session/rate limit. E2E cô lập API/schema/Redis prefix theo spec, giữ nguyên policy auth thật.

@@ -1,6 +1,6 @@
 # State machine đơn hàng và thanh toán
 
-Đây là thiết kế cho Phase 03, chưa phải endpoint đã triển khai ở Phase 01.
+Đã hiện thực và kiểm chứng ở Phase 03. Endpoint và DTO nguồn chuẩn tại [OpenAPI](../was/api/openapi.yaml).
 
 ## Order
 
@@ -29,7 +29,7 @@ Cancelled/Failed/Delivered là terminal. Không bỏ bước; transition lặp c
 
 ## Payment aggregate và attempts
 
-Aggregate Pending → Paid hoặc Cancelled. Attempt Pending → Paid/Failed/Cancelled. Attempt Failed giữ bất biến; retry tạo attempt mới, chỉ khi order Pending và chưa Paid. Unique partial index cho một Pending attempt/payment và một Paid attempt/payment. Payment aggregate unique/order.
+Aggregate Pending → Paid hoặc Cancelled. Attempt Pending → Paid/Failed/Cancelled. Attempt Failed giữ bất biến; retry tạo attempt mới, chỉ khi order Pending và chưa Paid. Tối đa 5 attempts/order trong local/demo. Unique partial index cho một Pending attempt/payment và một Paid attempt/payment. Payment aggregate unique/order.
 
 COD không tạo online attempt. Mock success khóa order/payment, kiểm trạng thái, cập nhật attempt Paid/payment Paid/order Confirmed cùng transaction. Mock failure chỉ đóng attempt, aggregate/order giữ Pending. Callback success sau cancel/Failed bị từ chối. Đơn Paid không hủy trong Base vì chưa có refund.
 
@@ -42,3 +42,5 @@ COD không tạo online attempt. Mock success khóa order/payment, kiểm trạn
 - Mất response sau commit: replay key trả snapshot response đã lưu, không checkout lại cart.
 - Broker down: order và outbox vẫn commit; relay phát lại sau phục hồi, consumer chống trùng.
 - Hủy lặp: unique inventory reference theo order/reason cộng row lock ngăn hoàn stock lần hai.
+
+Admin transition và customer cancel có namespace idempotency riêng; hạ quyền không cho replay snapshot của đơn người khác. Chỉ bật mock khi cấu hình local/test cho phép; khi tắt route attempt/simulate trả404. Xem [evidence](PROGRESS.md).

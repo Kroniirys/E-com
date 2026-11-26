@@ -1,0 +1,31 @@
+make -C was GO="/snap/go/current/bin/go" test-integration
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+GO="/snap/go/current/bin/go" bash scripts/test-integration.sh
+=== RUN   TestPhase02ImplementedContractMatchesRouter
+--- PASS: TestPhase02ImplementedContractMatchesRouter (0.48s)
+=== RUN   TestPhase02AdminCRUDValidationAndNormalization
+--- PASS: TestPhase02AdminCRUDValidationAndNormalization (2.58s)
+=== RUN   TestMigrationSeedAndRealHTTP
+--- PASS: TestMigrationSeedAndRealHTTP (0.10s)
+=== RUN   TestConstraintsAndSeedValidation
+--- PASS: TestConstraintsAndSeedValidation (0.04s)
+=== RUN   TestPhase02AuthRotationReuseAndRevocation
+--- PASS: TestPhase02AuthRotationReuseAndRevocation (1.52s)
+=== RUN   TestPhase02JWTValidationAndSessionState
+--- PASS: TestPhase02JWTValidationAndSessionState (0.70s)
+=== RUN   TestPhase02ConcurrentRefreshAndLastAdmin
+--- PASS: TestPhase02ConcurrentRefreshAndLastAdmin (0.68s)
+=== RUN   TestPhase02HTTPPermissionsCookiesAndOwnership
+--- PASS: TestPhase02HTTPPermissionsCookiesAndOwnership (0.91s)
+=== RUN   TestPhase02CatalogAtomicityVisibilityAndSearch
+--- PASS: TestPhase02CatalogAtomicityVisibilityAndSearch (0.49s)
+=== RUN   TestPhase02InventoryConcurrencyIdempotencyAndRollback
+--- PASS: TestPhase02InventoryConcurrencyIdempotencyAndRollback (0.51s)
+=== RUN   TestPhase02RedisLimitAndUnavailableAuth
+redis: 2026/11/26 09:58:16 pool.go:914: redis: connection pool: failed to dial after 5 attempts: dial tcp 127.0.0.1:1: connect: connection refused
+--- PASS: TestPhase02RedisLimitAndUnavailableAuth (1.68s)
+=== RUN   TestPhase02UpgradeAndRepeatSeed
+--- PASS: TestPhase02UpgradeAndRepeatSeed (1.52s)
+PASS
+ok  	ecommerce.local/base/tests/integration	11.211s
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'

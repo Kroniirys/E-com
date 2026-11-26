@@ -1,0 +1,8 @@
+{
+  "forced_api_restart": "PASS",
+  "exact_response_replay": "PASS",
+  "order_count": 1,
+  "stock_deductions": 1,
+  "cart_empty": true,
+  "order_id": "402d45eb-00ba-41a5-a363-a093be3931f9"
+}

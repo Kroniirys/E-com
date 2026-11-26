@@ -1,0 +1,16 @@
+
+> ecommerce-base-viewer@0.1.0 validate:api
+> redocly lint ../was/api/openapi.yaml --config .redocly.yaml
+
+validating ../was/api/openapi.yaml...
+../was/api/openapi.yaml: validated in 76ms
+
+Woohoo! Your API description is valid. 🎉
+
+
+> ecommerce-base-viewer@0.1.0 generate:api
+> openapi-typescript ../was/api/openapi.yaml -o src/api.generated.ts
+
+✨ openapi-typescript 7.13.0
+🚀 ../was/api/openapi.yaml → src/api.generated.ts [170.8ms]
+ok  	ecommerce.local/base/internal/httpserver	0.004s
