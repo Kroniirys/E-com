@@ -1,0 +1,76 @@
+npm --prefix viewer run validate:api
+
+> ecommerce-base-viewer@0.1.0 validate:api
+> redocly lint ../was/api/openapi.yaml --config .redocly.yaml
+
+validating ../was/api/openapi.yaml...
+../was/api/openapi.yaml: validated in 74ms
+
+Woohoo! Your API description is valid. 🎉
+
+npm --prefix viewer run generate:api
+
+> ecommerce-base-viewer@0.1.0 generate:api
+> openapi-typescript ../was/api/openapi.yaml -o src/api.generated.ts
+
+✨ openapi-typescript 7.13.0
+🚀 ../was/api/openapi.yaml → src/api.generated.ts [153.4ms]
+npm --prefix viewer run lint
+
+> ecommerce-base-viewer@0.1.0 lint
+> eslint .
+
+npm --prefix viewer run typecheck
+
+> ecommerce-base-viewer@0.1.0 typecheck
+> tsc -b
+
+npm --prefix viewer test
+
+> ecommerce-base-viewer@0.1.0 test
+> vitest run
+
+
+ RUN  v5.1.1 /home/dat.nguyen19/personal/E-com/viewer
+
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  10:02:34
+   Duration  646ms (environment 68%, setup 13%, tests 10%, transform 7%, import 2%, worker 1%)
+
+npm --prefix viewer run build
+
+> ecommerce-base-viewer@0.1.0 prebuild
+> npm run prepare-docs && npm run generate:api
+
+
+> ecommerce-base-viewer@0.1.0 prepare-docs
+> node scripts/prepare-docs.mjs
+
+
+> ecommerce-base-viewer@0.1.0 generate:api
+> openapi-typescript ../was/api/openapi.yaml -o src/api.generated.ts
+
+✨ openapi-typescript 7.13.0
+🚀 ../was/api/openapi.yaml → src/api.generated.ts [144.9ms]
+
+> ecommerce-base-viewer@0.1.0 build
+> tsc -b && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 29 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.50 kB │ gzip:  0.33 kB
+dist/assets/index-DvdZLqNQ.css   26.05 kB │ gzip:  5.66 kB
+dist/assets/index-CB-mvux5.js   274.56 kB │ gzip: 81.82 kB
+
+✓ built in 133ms
+
+> ecommerce-base-viewer@0.1.0 format:check
+> prettier --check src e2e *.config.ts
+
+Checking formatting...
+All matched files use Prettier code style!

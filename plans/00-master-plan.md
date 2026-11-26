@@ -3,10 +3,10 @@ title: "E-commerce Base — Plan tổng theo phase"
 artifact: implementation-plan
 role: fullstack
 status: draft
-version: 1.4
-owner: "TBD"
+version: 1.5
+owner: "datnguyen <dat01687241584@gmail.com>"
 approvers: []
-last_updated: 2026-11-25
+last_updated: 2026-11-26
 ---
 
 # E-commerce Base — Plan tổng theo phase
@@ -19,7 +19,7 @@ Tài liệu này thay thế cấu trúc milestone trong plan nguồn. Bộ tài 
 
 Quy ước lưu trữ: thư mục `plans/`, tên file tiếng Anh dạng kebab-case, tiền tố `00` cho plan tổng và `01`–`06` cho các phase; hậu tố `-plan.md` cho mọi file. Tiêu đề và nội dung sử dụng tiếng Việt có dấu.
 
-Tại thời điểm lập plan, repository E-com chỉ có plan nguồn, chưa có mã nguồn, `projects.toml`, Task hay System Design độc lập. Bộ plan fullstack này điều chỉnh template theo yêu cầu của dự án. Owner chưa có trong Git config nên giữ `TBD`; không tạo ticket hoặc trạng thái phê duyệt giả.
+Tại thời điểm lập plan, repository E-com chỉ có plan nguồn, chưa có mã nguồn, `projects.toml`, Task hay System Design độc lập. Bộ plan fullstack này điều chỉnh template theo yêu cầu của dự án. Owner được cập nhật từ danh tính Git do chủ dự án cung cấp; không tạo ticket hoặc trạng thái phê duyệt giả.
 
 Các chỉ dẫn AI trong nguồn được chuyển thành công việc trong plan. Việc chỉnh tài liệu không đồng nghĩa bắt đầu triển khai ứng dụng hoặc thực thi prompt cũ.
 
@@ -114,7 +114,7 @@ flowchart TD
 ## 6. Quy tắc thực hiện và nghiệm thu
 
 1. Đọc plan tổng và plan phase hiện tại; triển khai theo ID `Pxx-nn` và phụ thuộc. Chưa bắt đầu công việc chỉ vì nó được nhắc trong tài liệu nguồn.
-2. Mỗi công việc cập nhật `docs/PROGRESS.md` với kết quả, lệnh kiểm tra và evidence. Checkbox trong bộ plan hiện đều chưa đánh dấu.
+2. Mỗi công việc cập nhật `docs/PROGRESS.md` với kết quả, lệnh kiểm tra và evidence. Chỉ đánh dấu checkbox khi đã có kết quả và evidence tương ứng.
 3. Kiểm thử business logic và tích hợp cùng phase triển khai. Phase 06 chạy tổng hợp, không phải nơi bắt đầu viết test.
 4. Cập nhật ERD/OpenAPI/decision log/migration/UI khi đổi contract. Không sửa ngược migration đã áp dụng.
 5. Không commit secret. Không log password/token. Seed tài khoản demo dùng cấu hình local và có thể chạy lặp.
@@ -155,9 +155,9 @@ Thứ tự: chốt nghiệp vụ → thiết kế và nền tảng → tài kho�
 - Chốt chính sách auth/rate limit, cache, retry, môi trường test và fixture bằng cấu hình có kiểm thử; không bịa cam kết hiệu năng khi chưa đo.
 - Ghi owner thật khi có thông tin Git; không suy từ tên tài khoản máy.
 
-## 8. Trạng thái thực hiện (2026-11-25)
+## 8. Trạng thái thực hiện (2026-11-26)
 
-Phase 01 đã có mã nguồn, tài liệu và kiểm chứng native; còn gate chạy Compose do môi trường Docker. Chưa bắt đầu Phase 02. Xem [progress](../docs/PROGRESS.md), [review độc lập](../docs/review-phase-01.md) và [hướng dẫn chạy](../README.md). Không có ước lượng thời gian được bổ sung.
+Phase 01 và Phase 02 đã hoàn thành mã nguồn, tài liệu và kiểm chứng native; Docker tạm hoãn theo yêu cầu chủ dự án. Phase 03 chưa bắt đầu. Xem [progress](../docs/PROGRESS.md), [review độc lập](../docs/review-phase-01.md) và [hướng dẫn chạy](../README.md). Không có ước lượng thời gian được bổ sung.
 
 ## 9. Quy ước cấu trúc mã nguồn
 
