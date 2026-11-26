@@ -145,3 +145,37 @@ Hoàn thành P04-01–06 theo [plan](../plans/04-coupons-reviews-admin-plan.md),
 Integration bổ sung:20buyer tranh3lượt coupon, chỉ3order/usage; cancel/replay không thay used_count; fault outbox rollback usage/stock; review đồng thời chỉ1bản, xóa mềm không cho tạo lại; hidden review không vào public aggregate; dashboard loại Pending/Cancelled/Delivered-unpaid và tổng9000000031000 vượt trần một order. Persist record/hash4-field ở schema3 trước nâng cấp rồi replay bằng schema4 không đổi ID/tiền. Rollback4 từ chối xóa review/audit. Seed opt-in tạo Delivered/review qua service và chạy2lần không nhân bản.
 
 Phase03 đã push/merge develop tại12ec68d, gồm9f6cec9 (code) và7b44028 (docs). Phase04 ở branch local feat/phase-04-coupons-reviews-admin, chưa commit/push. [Review độc lập](review-phase-04.md); evidence các phase cũ giữ nguyên. Phase05 chưa bắt đầu.
+
+## Phase 05 — Cache, async, notification và Docker (2026-11-26)
+
+Hoàn thành P05-01–06 theo [plan](../plans/05-cache-events-workers-plan.md). Theo yêu cầu mới, đã kiểm Docker thật, thay trạng thái tạm hoãn của các lượt trước. Dùng project ecom-phase05-verify với secret tạm ngoài Git, port/volume riêng. Không chmod socket hoặc reset volume; truy cập daemon qua sg docker.
+
+| Phạm vi | Kết quả / evidence |
+| --- | --- |
+| P05-01 | Cache Redis detail/list/category, DB generation snapshot chống late-fill/visibility, timeout/fallback bounded; [integration](evidence/phase-05/integration.txt) |
+| P05-02 | Producer product/category/adjustment và checkout/release atomic; relay lease/token/mandatory/confirm; [integration](evidence/phase-05/integration.txt) |
+| P05-03 | Inbox/dedupe, retry3lần/DLQ/replay, two-relay và crash windows; [integration](evidence/phase-05/integration.txt) |
+| P05-04 | Notification owner/list/unread/read và UI, console mock email; [native browser](evidence/phase-05/e2e.txt), [Docker browser](evidence/phase-05/docker-browser.txt) |
+| P05-05 | Full Compose/Prometheus/API-worker metrics và readiness; [Docker build/start](evidence/phase-05/docker-final.txt), [fault report](evidence/phase-05/docker-verification.json) |
+| P05-06 | Regression, faults, recovery và docs; [review](review-phase-05.md), [operations](operations.md) |
+
+| Kiểm chứng | Kết quả | Raw evidence |
+| --- | --- | --- |
+| Go unit/race | Đạt19test, gồm silent-peer handshake và TLS worker | [log](evidence/phase-05/go-race.txt) |
+| Go vet | Đạt exit0, log rỗng | [log](evidence/phase-05/go-vet.txt) |
+| Native build | Đạt6binary vận hành, thêm helper testscope ở E2E | [log](evidence/phase-05/build-go.txt) |
+| PostgreSQL/Redis/RabbitMQ integration | Đạt39test, không skip | [log](evidence/phase-05/integration.txt) |
+| Viewer/OpenAPI | Đạt13unit, validate/generate/lint/typecheck/build/format | [log](evidence/phase-05/viewer-check.txt) |
+| Native E2E | Đạt5spec với API+worker/schema/queue riêng mỗi spec | [log](evidence/phase-05/e2e.txt), [mobile](evidence/phase-05/native-e2e/notifications-mobile.png) |
+| Docker Nginx browser | Đạt1notification flow + read/reload/mobile | [log](evidence/phase-05/docker-browser.txt), [mobile](evidence/phase-05/docker-browser/notifications-mobile.png) |
+| Docker faults/recovery | Đạt9checks | [JSON](evidence/phase-05/docker-verification.json), [log](evidence/phase-05/docker-verification.txt) |
+
+Docker xác nhận: Nginx proxy; broker down vẫn commit order/outbox và phục hồi đúng1notification; duplicate không nhân bản; SIGKILL worker rồi xử lý backlog; Redis down catalog fallback/auth503/checkout dùngDB; PostgreSQL restart giữ stock/dữ liệu; full stop/up giữ named-volume và read state; metrics có runtime sample và Prometheus cả2job up. Counter reset sau process restart được xử lý đúng trong bài kiểm tra.
+
+AMQP riêng xác nhận unroutable kèm confirm không bị đánh thành công; publish-before-mark phát lại ID; stale token không mark claim mới; hai relay không trùng; commit-before-ack redelivery không nhân notification; retry hết3lần sangDLQ rồi replay sau phục hồi. Cache test có hit thật, miss/late-fill/fallback và visibility. Fixture migration cũ được điều chỉnh để ghi dữ liệu bằng schema thời điểm đó, không gọi producer schema5 trên schema2.
+
+Docker attempt đầu bị lỗi compile Viewer từ snapshot cũ, không được tính pass; [log lịch sử](evidence/phase-05/docker-start.txt) được giữ, [lượt cuối](evidence/phase-05/docker-final.txt) đạt. Evidence Phase01–04 không ghi đè. Schema5 có27bảng ứng dụng; OpenAPI0.5.0 có67operation hiện thực (2mock route có điều kiện).
+
+Phase04 đã push/merge develop848579d trước lượt này. Phase05 ở branch local feat/phase-05-cache-events-workers, chưa commit/push. Phase06 còn nghiệm thu tổng hợp/benchmark/backup-restore/handover.
+
+Kiểm tra cuối sau rebuild: API/worker/Nginx readiness và hai Prometheus target đạt; [smoke evidence](evidence/phase-05/final-smoke.json). Không còn schema native test. Đã dừng PostgreSQL/Redis native và dọn container/network Docker test bằng down, giữ nguyên named volume; [cleanup log](evidence/phase-05/cleanup.txt). Secret sinh riêng trong /tmp không xuất hiện trong thay đổi Git.

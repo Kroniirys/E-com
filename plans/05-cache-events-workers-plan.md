@@ -3,10 +3,10 @@ title: "Phase 05 — Cache, sự kiện và worker"
 artifact: implementation-plan
 role: fullstack
 status: draft
-version: 0.3
-owner: "TBD"
+version: 0.4
+owner: "datnguyen <dat01687241584@gmail.com>"
 approvers: []
-last_updated: 2026-11-25
+last_updated: 2026-11-26
 ---
 
 # Phase 05 — Cache, sự kiện và worker
@@ -87,18 +87,28 @@ Mọi event producer giữ outbox cùng transaction nghiệp vụ. Không purge 
 
 ## 5. Tiêu chí hoàn thành
 
-- [ ] Redis phục vụ cache và rate limit thực tế; invalidation/race/fallback có kiểm chứng.
-- [ ] Outbox relay có confirm/route handling, recovery và chống claim kẹt.
-- [ ] Consumer idempotent, retry hữu hạn, DLQ/replay và shutdown hoạt động.
-- [ ] Notification từ event hiện trên UI đúng quyền; mất broker/worker không mất sự kiện đã commit.
-- [ ] Compose toàn stack chạy được và Prometheus thu dữ liệu thật.
-- [ ] Fault injection/regression đạt, docs và evidence đủ tái lập.
+- [x] Redis phục vụ cache và rate limit thực tế; invalidation/race/fallback có kiểm chứng.
+- [x] Outbox relay có confirm/route handling, recovery và chống claim kẹt.
+- [x] Consumer idempotent, retry hữu hạn, DLQ/replay và shutdown hoạt động.
+- [x] Notification từ event hiện trên UI đúng quyền; mất broker/worker không mất sự kiện đã commit.
+- [x] Compose toàn stack chạy được và Prometheus thu dữ liệu thật.
+- [x] Fault injection/regression đạt, docs và evidence đủ tái lập.
 
 ## 6. Checklist review
 
-- [ ] Phân biệt atomic transaction với at-least-once delivery; không hứa exactly-once ngoài DB.
-- [ ] Đã kiểm tra crash windows, routing failure, duplicate, ordering và retry poison message.
-- [ ] Cache không làm lộ hàng bị ẩn hoặc ảnh hưởng giá/stock checkout.
-- [ ] Metrics/log/queue management không lộ secret hoặc tạo cardinality cao.
+- [x] Phân biệt atomic transaction với at-least-once delivery; không hứa exactly-once ngoài DB.
+- [x] Đã kiểm tra crash windows, routing failure, duplicate, ordering và retry poison message.
+- [x] Cache không làm lộ hàng bị ẩn hoặc ảnh hưởng giá/stock checkout.
+- [x] Metrics/log/queue management không lộ secret hoặc tạo cardinality cao.
 
 Tiếp theo: [Phase 06](06-verification-handover-plan.md).
+
+## Implementation Result
+
+### Lần 1 (2026-11-26)
+
+Đã hoàn thành P05-01–06: schema5, cache generation/visibility/fallback, producer outbox đầy đủ, relay lease/token và mandatory/confirms, inbox/notification, bounded retry/DLQ/replay, UI, metrics/Prometheus và Compose mặc định. Không chuyển stock/payment/coupon sang worker.
+
+Kiểm chứng:19 Go unit/race +vet,39 integration trên PostgreSQL/Redis/RabbitMQ thật,13 Viewer unit và5E2E native; thêm1browserE2E qua Nginx Docker và9fault/recovery checks Docker. Có fake handshake, cache hit/late-fill, hai relay, stale token, publish-before-mark, commit-before-ack/redelivery, retry hết hạn mức/DLQ/replay. Review độc lập đã sửa handshake timeout và nội dung notification thanh toán; không còn finding cần sửa trong phạm vi đã rà.
+
+[Progress/evidence](../docs/PROGRESS.md), [review](../docs/review-phase-05.md), [operations](../docs/operations.md). Docker đã kiểm thực tế theo yêu cầu mới. Status giữ draft, không tự phê duyệt artifact. Phase06 chưa bắt đầu; Phase05 chưa commit/push.

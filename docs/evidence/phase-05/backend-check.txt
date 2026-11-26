@@ -1,0 +1,8 @@
+ok  	ecommerce.local/base/internal/worker	0.003s
+?   	ecommerce.local/base/cmd/api	[no test files]
+?   	ecommerce.local/base/cmd/events	[no test files]
+?   	ecommerce.local/base/cmd/healthcheck	[no test files]
+?   	ecommerce.local/base/cmd/migrate	[no test files]
+?   	ecommerce.local/base/cmd/seed	[no test files]
+?   	ecommerce.local/base/cmd/testscope	[no test files]
+?   	ecommerce.local/base/cmd/worker	[no test files]

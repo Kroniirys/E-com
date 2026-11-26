@@ -48,3 +48,7 @@ CART-01, ORD-01, PAY-01 và phần checkout/cancel của INV-01 đã hiện th�
 ## Kết quả Phase 04
 
 CPN-01 và REV-01 đã triển khai; ADM-01 bổ sung dashboard/coupon/moderation với SQL thật. Coupon được kiểm lại và lưu usage/snapshot trong checkout transaction; review cần Delivered và public aggregate theo visibility. Chi tiết và evidence tại [progress](PROGRESS.md). Cache/publisher/consumer/notification còn thuộc Phase05.
+
+## Kết quả Phase 05
+
+ASY-01, NTF-01 và phần cache/metrics của OPS-01 đã hiện thực và có kiểm chứng thật. Docker toàn stack đã chạy, fault/recovery và browser notification qua Nginx đạt. Phần benchmark, backup/restore và nghiệm thu tổng hợp còn thuộc Phase06. Xem [progress](PROGRESS.md).

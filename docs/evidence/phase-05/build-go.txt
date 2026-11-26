@@ -1,0 +1,10 @@
+make -C was GO="/snap/go/current/bin/go" build
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+mkdir -p bin
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/api ./cmd/api
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/worker ./cmd/worker
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/migrate ./cmd/migrate
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/seed ./cmd/seed
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/healthcheck ./cmd/healthcheck
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/events ./cmd/events
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'

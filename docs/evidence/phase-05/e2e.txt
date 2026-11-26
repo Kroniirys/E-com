@@ -1,0 +1,160 @@
+make -C was GO="/snap/go/current/bin/go" build
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+mkdir -p bin
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/api ./cmd/api
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/worker ./cmd/worker
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/migrate ./cmd/migrate
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/seed ./cmd/seed
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/healthcheck ./cmd/healthcheck
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/events ./cmd/events
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'
+make -C was GO="/snap/go/current/bin/go" test-helper
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+CGO_ENABLED=0 /snap/go/current/bin/go build -trimpath -o bin/testscope ./cmd/testscope
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'
+python3 scripts/run-e2e.py
+Running isolated E2E spec: e2e/foundation.spec.ts
+2026/11/26 15:45:47 INFO outbox event staged event_id=67c745f1-2db8-4277-ae6e-4505d8c866a8 event_type=category.changed aggregate_id=361dfd5a-3e13-469e-8e17-0874d0063d18 request_id=""
+2026/11/26 15:45:47 INFO outbox event staged event_id=5537010d-1786-4f3b-8be9-b3c401e70c2c event_type=category.changed aggregate_id=44fb70de-6a3e-430e-88a9-7302c1f101a7 request_id=""
+2026/11/26 15:45:47 INFO outbox event staged event_id=6b2c5f71-563c-4e90-b40b-767ef36e12d5 event_type=product.changed aggregate_id=4c92d9c5-90bd-4123-908f-76a9ceec4957 request_id=""
+2026/11/26 15:45:47 INFO outbox event staged event_id=eb6ba8ba-9722-4497-a192-ae76621d66fb event_type=inventory.updated aggregate_id=4c92d9c5-90bd-4123-908f-76a9ceec4957 request_id=""
+2026/11/26 15:45:47 INFO outbox event staged event_id=b5675440-4225-464f-8056-fa494e04a8af event_type=product.changed aggregate_id=d8467ad1-bc9a-4991-b1e9-ad29fa8e5130 request_id=""
+2026/11/26 15:45:47 INFO outbox event staged event_id=228054d3-8ed8-4739-a669-0bfb442ae141 event_type=inventory.updated aggregate_id=d8467ad1-bc9a-4991-b1e9-ad29fa8e5130 request_id=""
+2026/11/26 15:45:47 INFO outbox event staged event_id=fc3bc4b2-122b-455b-ac12-1ede0be564e0 event_type=product.changed aggregate_id=b9dc4e90-3469-4f87-8d8b-44e735bbdc29 request_id=""
+2026/11/26 15:45:47 INFO outbox event staged event_id=657bb340-2254-4098-9039-22f2a64e190f event_type=product.changed aggregate_id=e58e0ec7-7cd7-4274-b737-4e63c7c7fc5f request_id=""
+2026/11/26 15:45:47 INFO outbox event staged event_id=2396d501-b793-4ff5-8828-39923aa45ab3 event_type=inventory.updated aggregate_id=e58e0ec7-7cd7-4274-b737-4e63c7c7fc5f request_id=""
+2026/11/26 15:45:47 INFO outbox event staged event_id=00c0ce70-848f-45fe-b1f9-d7edb242b4ba event_type=product.changed aggregate_id=dfef4245-4cbe-4b64-a62f-9ac81cb0ff90 request_id=""
+2026/11/26 15:45:47 INFO outbox event staged event_id=1fc6655b-337d-4612-b9d7-8b527d896a0c event_type=inventory.updated aggregate_id=dfef4245-4cbe-4b64-a62f-9ac81cb0ff90 request_id=""
+store settings seeded without overwriting existing data
+
+> ecommerce-base-viewer@0.1.0 test:e2e
+> playwright test e2e/foundation.spec.ts
+
+[WebServer] (node:278701) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:278776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:278873) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/foundation.spec.ts:2:1 › UI đọc backend/database thật và tài liệu API local hoạt động (1.4s)
+
+  1 passed (4.0s)
+Running isolated E2E spec: e2e/phase02.spec.ts
+2026/11/26 15:45:52 INFO outbox event staged event_id=99e37dbe-ccbd-4868-a767-662868f35536 event_type=category.changed aggregate_id=c0a1d965-9ab3-433c-845b-de63179bfe41 request_id=""
+2026/11/26 15:45:52 INFO outbox event staged event_id=b6f4f422-f64e-4621-ad74-d05795596f9e event_type=category.changed aggregate_id=b77e0158-5a12-4ae8-b8e4-b171fc0bdd4b request_id=""
+2026/11/26 15:45:52 INFO outbox event staged event_id=4e98fa76-3be3-4d93-9a50-2516f7d957e2 event_type=product.changed aggregate_id=8efb05ed-af49-4e19-97c1-8c50b9aad49d request_id=""
+2026/11/26 15:45:52 INFO outbox event staged event_id=1125f06f-81cd-4dce-b9fa-1fa6a536206c event_type=inventory.updated aggregate_id=8efb05ed-af49-4e19-97c1-8c50b9aad49d request_id=""
+2026/11/26 15:45:52 INFO outbox event staged event_id=c3452b63-ce4e-4a4b-81f4-69933e6c75ec event_type=product.changed aggregate_id=a9a3042a-29c3-4812-b4e3-ab7578559cc2 request_id=""
+2026/11/26 15:45:52 INFO outbox event staged event_id=7d8caaf8-eb07-44df-98a3-1a6350a89883 event_type=inventory.updated aggregate_id=a9a3042a-29c3-4812-b4e3-ab7578559cc2 request_id=""
+2026/11/26 15:45:52 INFO outbox event staged event_id=b8b07447-0f94-47cb-ad70-78bc27948da0 event_type=product.changed aggregate_id=b70129f3-07ff-48bc-a19d-b7232605fadf request_id=""
+2026/11/26 15:45:52 INFO outbox event staged event_id=363aacf5-5b61-4ce3-ae3b-432e1e5a5d57 event_type=product.changed aggregate_id=7aef1b9f-45d6-477b-ac9a-9675f27d8c04 request_id=""
+2026/11/26 15:45:52 INFO outbox event staged event_id=6fe45b38-3bfe-4d9c-81c0-10ac1043f645 event_type=inventory.updated aggregate_id=7aef1b9f-45d6-477b-ac9a-9675f27d8c04 request_id=""
+2026/11/26 15:45:52 INFO outbox event staged event_id=a154549a-3816-4006-bf55-1b983eb5dc97 event_type=product.changed aggregate_id=1e226c35-0bb5-469b-a5c2-4799cc27bff4 request_id=""
+2026/11/26 15:45:52 INFO outbox event staged event_id=22462c0a-77d2-42cf-ba16-036865bb4d05 event_type=inventory.updated aggregate_id=1e226c35-0bb5-469b-a5c2-4799cc27bff4 request_id=""
+store settings seeded without overwriting existing data
+
+> ecommerce-base-viewer@0.1.0 test:e2e
+> playwright test e2e/phase02.spec.ts
+
+[WebServer] (node:279357) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:279386) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:279536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/phase02.spec.ts:3:1 › Phase 02: admin CRUD và tồn kho, customer profile, session nhiều tab (6.7s)
+
+  1 passed (9.2s)
+Running isolated E2E spec: e2e/phase03.spec.ts
+2026/11/26 15:46:03 INFO outbox event staged event_id=a8450de6-f1fe-4a2c-a0bb-527b67cc5c79 event_type=category.changed aggregate_id=742e5572-52d3-4fa5-bebe-c4d996b6b0ce request_id=""
+2026/11/26 15:46:03 INFO outbox event staged event_id=d6530873-d7c3-478f-a29c-0919599bb0f1 event_type=category.changed aggregate_id=08239baa-3aa9-4617-9dcf-ea434076a266 request_id=""
+2026/11/26 15:46:03 INFO outbox event staged event_id=495efede-8f66-45b7-a7bf-9e8bedfd98df event_type=product.changed aggregate_id=2f8ec76e-7121-400c-99bc-e30264b35a0d request_id=""
+2026/11/26 15:46:03 INFO outbox event staged event_id=8f49669e-d89f-4d1e-84bd-a50351c2aa46 event_type=inventory.updated aggregate_id=2f8ec76e-7121-400c-99bc-e30264b35a0d request_id=""
+2026/11/26 15:46:03 INFO outbox event staged event_id=8535f22f-f91a-493b-9a65-9099666c489f event_type=product.changed aggregate_id=91415856-2689-40d2-a705-d0e863b32163 request_id=""
+2026/11/26 15:46:03 INFO outbox event staged event_id=d7520ef2-129d-4fde-ba60-98ffbeebdd02 event_type=inventory.updated aggregate_id=91415856-2689-40d2-a705-d0e863b32163 request_id=""
+2026/11/26 15:46:03 INFO outbox event staged event_id=67927b4e-e55c-4bcb-b4e3-c60189247be1 event_type=product.changed aggregate_id=d70525a2-44b1-4988-b668-b0d333d1dd20 request_id=""
+2026/11/26 15:46:03 INFO outbox event staged event_id=35b88add-7148-4b08-9843-a878b1f087ce event_type=product.changed aggregate_id=b73381c6-e653-4c01-a4ed-91a4c8bf67f3 request_id=""
+2026/11/26 15:46:03 INFO outbox event staged event_id=12ba74c4-1f81-4d74-a7e1-b937dfd5d817 event_type=inventory.updated aggregate_id=b73381c6-e653-4c01-a4ed-91a4c8bf67f3 request_id=""
+2026/11/26 15:46:03 INFO outbox event staged event_id=110fb2a2-4dc8-45c4-b753-afea18efa552 event_type=product.changed aggregate_id=6d459156-c112-4bd7-b92e-e0a2b42f94ce request_id=""
+2026/11/26 15:46:03 INFO outbox event staged event_id=d5b0c17a-fd29-4a1f-80c5-911d1e5bc8e1 event_type=inventory.updated aggregate_id=6d459156-c112-4bd7-b92e-e0a2b42f94ce request_id=""
+store settings seeded without overwriting existing data
+
+> ecommerce-base-viewer@0.1.0 test:e2e
+> playwright test e2e/phase03.spec.ts
+
+[WebServer] (node:280374) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:280417) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:280515) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/phase03.spec.ts:3:1 › Phase 03: COD, mất response/reload/retry, admin giao hàng và mock thất bại rồi thành công (4.6s)
+
+  1 passed (6.9s)
+Running isolated E2E spec: e2e/phase04.spec.ts
+2026/11/26 15:46:11 INFO outbox event staged event_id=38975f27-3a4f-4191-b568-d2801c2b2ffc event_type=category.changed aggregate_id=f0f1faa1-5e79-44b8-9115-a2b19fb1eb4a request_id=""
+2026/11/26 15:46:11 INFO outbox event staged event_id=a3333c8a-f238-4a17-9edd-dec7d81a4df5 event_type=category.changed aggregate_id=8092a2fc-fc79-40e2-ad06-67c4f7d5fbd2 request_id=""
+2026/11/26 15:46:11 INFO outbox event staged event_id=1c890608-7c3e-4fc7-9f85-618d00244da2 event_type=product.changed aggregate_id=b21f4dc9-93dc-4466-a7a5-78a166b2ef2b request_id=""
+2026/11/26 15:46:11 INFO outbox event staged event_id=8b6b92a1-d02f-4a01-ab51-b6d7778986ce event_type=inventory.updated aggregate_id=b21f4dc9-93dc-4466-a7a5-78a166b2ef2b request_id=""
+2026/11/26 15:46:11 INFO outbox event staged event_id=93e84b5a-dadb-437f-a93f-11c54a567202 event_type=product.changed aggregate_id=b5efb62d-f59b-45d3-8b72-64b88de7c90c request_id=""
+2026/11/26 15:46:11 INFO outbox event staged event_id=8fa9eeca-22aa-491d-9a99-592af314dc55 event_type=inventory.updated aggregate_id=b5efb62d-f59b-45d3-8b72-64b88de7c90c request_id=""
+2026/11/26 15:46:11 INFO outbox event staged event_id=623e11c4-bac0-4dab-8d64-e8a9c73aa0de event_type=product.changed aggregate_id=4e6797b9-2b4d-424d-ae5f-0f23fed4dd75 request_id=""
+2026/11/26 15:46:11 INFO outbox event staged event_id=171c328f-2a62-4dc4-bb79-4fee99a0b01c event_type=product.changed aggregate_id=c02edbd6-6f6a-40cd-b4be-98f9963bd9aa request_id=""
+2026/11/26 15:46:11 INFO outbox event staged event_id=732ee094-9ddd-4d96-a78f-543b2edeb925 event_type=inventory.updated aggregate_id=c02edbd6-6f6a-40cd-b4be-98f9963bd9aa request_id=""
+2026/11/26 15:46:11 INFO outbox event staged event_id=3dd6adc0-4260-4ca9-b16b-234d2e647aea event_type=product.changed aggregate_id=e3a14084-66e2-48cb-9603-60da2afa08ca request_id=""
+2026/11/26 15:46:11 INFO outbox event staged event_id=0b9a1d48-666e-4d47-8a1e-17d3fa74c786 event_type=inventory.updated aggregate_id=e3a14084-66e2-48cb-9603-60da2afa08ca request_id=""
+store settings seeded without overwriting existing data
+
+> ecommerce-base-viewer@0.1.0 test:e2e
+> playwright test e2e/phase04.spec.ts
+
+[WebServer] (node:281167) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:281180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:281207) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/phase04.spec.ts:2:1 › Phase04: coupon checkout, Delivered review, moderation và dashboard (3.7s)
+
+  1 passed (5.1s)
+Running isolated E2E spec: e2e/phase05.spec.ts
+2026/11/26 15:46:18 INFO outbox event staged event_id=79bc7dcc-454f-4e1b-b910-ee0cb8df1a27 event_type=category.changed aggregate_id=e0f4d7fe-9852-41f6-a9e5-f8a5b27cd3ea request_id=""
+2026/11/26 15:46:18 INFO outbox event staged event_id=d8212755-0935-4805-a7c8-ebd9fb0e496c event_type=category.changed aggregate_id=b81192b9-b9be-481c-ae49-aecb025f010d request_id=""
+2026/11/26 15:46:18 INFO outbox event staged event_id=0a6767bf-1e8d-4a42-9256-d603e7117fec event_type=product.changed aggregate_id=d8978c83-0d91-4220-89c9-aeeb1bbaad10 request_id=""
+2026/11/26 15:46:18 INFO outbox event staged event_id=31473274-1474-4144-b4d9-fecf1bbbfae9 event_type=inventory.updated aggregate_id=d8978c83-0d91-4220-89c9-aeeb1bbaad10 request_id=""
+2026/11/26 15:46:18 INFO outbox event staged event_id=3fe7237f-470b-45dd-bccf-e65abf50fd8a event_type=product.changed aggregate_id=89255766-9000-4226-b06f-afe5e8fc4a99 request_id=""
+2026/11/26 15:46:18 INFO outbox event staged event_id=53498626-a31d-4429-bbf6-bab74b238d4a event_type=inventory.updated aggregate_id=89255766-9000-4226-b06f-afe5e8fc4a99 request_id=""
+2026/11/26 15:46:18 INFO outbox event staged event_id=eaef1f65-5993-417c-934f-cd2b8d702d6d event_type=product.changed aggregate_id=a599ae68-d4c8-45cf-91d9-266d572968d1 request_id=""
+2026/11/26 15:46:18 INFO outbox event staged event_id=7699ed60-ab6b-4218-93b5-a1713fa37b75 event_type=product.changed aggregate_id=95d47d8d-df42-413c-9bd9-5c1d0ce724a4 request_id=""
+2026/11/26 15:46:18 INFO outbox event staged event_id=14872ea3-d540-4c44-83fb-2f1f75bd15a8 event_type=inventory.updated aggregate_id=95d47d8d-df42-413c-9bd9-5c1d0ce724a4 request_id=""
+2026/11/26 15:46:18 INFO outbox event staged event_id=625dab71-efe9-4185-bccf-ab4a62158ecd event_type=product.changed aggregate_id=c1e57acd-7812-40af-b1a9-c28087924c37 request_id=""
+2026/11/26 15:46:18 INFO outbox event staged event_id=1a36317f-c97a-4341-9d5a-8083716545e5 event_type=inventory.updated aggregate_id=c1e57acd-7812-40af-b1a9-c28087924c37 request_id=""
+store settings seeded without overwriting existing data
+
+> ecommerce-base-viewer@0.1.0 test:e2e
+> playwright test e2e/phase05.spec.ts
+
+[WebServer] (node:281703) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:281773) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:281863) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/phase05.spec.ts:2:1 › Phase05: order event → worker → notification UI và đánh dấu đã đọc (2.2s)
+
+  1 passed (4.6s)

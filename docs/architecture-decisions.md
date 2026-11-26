@@ -59,3 +59,9 @@ Phase 01 không có blocker thiết kế cho auth/catalog. Trước Phase 05 ph�
 Coupon preview hash bind base quote, coupon ID/version/terms/discount/total; used_count không đổi terms version. Lock checkout thêm coupon giữa product và inventory. Consume/usage/snapshot/stock/outbox/idempotency cùng commit, hủy không hoàn lượt. Code coupon_code omitempty giữ replay legacy.
 
 Review Delivered là proof bất biến; tạo khóa user rồi product, unique cả soft-delete. Public visibility + summary/list cùng snapshot. Dashboard dùng [from,to) calendar dates theo IANA, tất cả chỉ số theo created_at; sum trả decimal string và UI BigInt để không mất độ chính xác.
+
+## Phase 05
+
+DB generation + RepeatableRead chống cache late-fill/stale visibility, kể cả khi broker invalidation trễ. Generation trigger deferred để không lấy global generation lock trước business row locks. Redis observed-generation dùng MAX và không là nguồn quyền/giá/stock.
+
+AMQP gate có deadline3s bao gồm chờ gate, socket write và confirm; handshake3s. Claim1row/lease10s/mark theo token. Retry queue do consumer manual ack, tránh phụ thuộc TTL DLX at-most-once. Max3transient retries, poison vàoDLQ; inspect/replay giữ ID. Inbox + notification commit cùng nhau; console mock email không có exactly-once guarantee.

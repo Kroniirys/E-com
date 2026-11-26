@@ -1,0 +1,35 @@
+?   	ecommerce.local/base/api	[no test files]
+?   	ecommerce.local/base/cmd/api	[no test files]
+?   	ecommerce.local/base/cmd/events	[no test files]
+?   	ecommerce.local/base/cmd/healthcheck	[no test files]
+?   	ecommerce.local/base/cmd/migrate	[no test files]
+?   	ecommerce.local/base/cmd/seed	[no test files]
+?   	ecommerce.local/base/cmd/testscope	[no test files]
+?   	ecommerce.local/base/cmd/worker	[no test files]
+?   	ecommerce.local/base/internal/bootstrap	[no test files]
+ok  	ecommerce.local/base/internal/config	1.026s
+?   	ecommerce.local/base/internal/database	[no test files]
+?   	ecommerce.local/base/internal/httpapi	[no test files]
+ok  	ecommerce.local/base/internal/httpserver	1.117s
+ok  	ecommerce.local/base/internal/infrastructure/rabbitmq	4.016s
+ok  	ecommerce.local/base/internal/modules/admin	(cached)
+?   	ecommerce.local/base/internal/modules/auth	[no test files]
+?   	ecommerce.local/base/internal/modules/cart	[no test files]
+ok  	ecommerce.local/base/internal/modules/catalog	1.023s
+ok  	ecommerce.local/base/internal/modules/coupons	(cached)
+?   	ecommerce.local/base/internal/modules/inventory	[no test files]
+?   	ecommerce.local/base/internal/modules/notifications	[no test files]
+ok  	ecommerce.local/base/internal/modules/orders	1.031s
+?   	ecommerce.local/base/internal/modules/payments	[no test files]
+ok  	ecommerce.local/base/internal/modules/reviews	(cached)
+ok  	ecommerce.local/base/internal/modules/users	(cached)
+?   	ecommerce.local/base/internal/platform/cache	[no test files]
+?   	ecommerce.local/base/internal/platform/idempotency	[no test files]
+?   	ecommerce.local/base/internal/platform/limit	[no test files]
+?   	ecommerce.local/base/internal/platform/metrics	[no test files]
+ok  	ecommerce.local/base/internal/platform/money	(cached)
+?   	ecommerce.local/base/internal/platform/outbox	[no test files]
+?   	ecommerce.local/base/internal/platform/problem	[no test files]
+ok  	ecommerce.local/base/internal/runtime	(cached)
+ok  	ecommerce.local/base/internal/worker	1.026s
+ok  	ecommerce.local/base/migrations	(cached)

@@ -60,3 +60,9 @@ Mock attempt chỉ tạo khi order/payment Pending và chưa có attempt Pending
 Coupon CRUD/archive/preview, review public/eligibility/own list/create/delete/moderation và dashboard đã hiện thực. OpenAPI0.4.0 có66operations, 64 hiện thực khi bật mock. Preview trả cart_quote_hash để UI phát hiện giỏ đang hiển thị đã cũ, cùng quote_hash gắn terms coupon; checkout coupon_code omitempty giữ fingerprint request Phase03. Order thêm coupon_snapshot nullable, discount không giảm shipping.
 
 Admin moderation trả AdminReview có moderation_reason/moderated_by/moderated_at; public không trả các trường này. Review page gồm summary và items trong cùng RepeatableRead. Dashboard tổng tiền trả decimal string, timezone IANA và biên ngày [from,to), date basis created_at.
+
+## Phase 05
+
+OpenAPI0.5.0 có67operations hiện thực (2 mock route chỉ mount khi bật local/test). Notification list trả page + unread_count và DTO event/kind/order/occurred_at/version/read_at; POST /notifications/{id}/read trả204 và không đổi thời điểm đọc đầu tiên. Cả hai route kiểm JWT/owner phía server.
+
+GET /internal/metrics trả Prometheus text, chỉ publish local/internal và không proxy qua Viewer. Worker có readiness/metrics riêng tại port8082, không nằm trong API OpenAPI port8080. Cache không đổi contract catalog hoặc nguồn tính tiền/stock checkout.

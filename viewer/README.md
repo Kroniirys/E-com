@@ -21,3 +21,5 @@ Các màn hình Phase 02: storefront/detail, đăng ký/đăng nhập, account/p
 E2E toàn hệ thống chạy từ root bằng `make test-e2e`; runner tự khởi chạy WAS test và Vite, dùng PostgreSQL/Redis thật với schema/key prefix riêng. Xem [hướng dẫn workspace](../README.md). Dockerfile của Viewer dùng context root để copy contract; Docker đang tạm hoãn kiểm chứng.
 
 Phase 03 thêm `/#/cart`, `/#/orders` và `/#/admin/orders`: COD/mock, retry/hủy/lifecycle/history. Intent chưa có kết quả được giữ trong sessionStorage theo user; không lưu access token. E2E cô lập từng spec bằng API/schema/Redis prefix riêng để giữ nguyên rate limit thật.
+
+Phase05 thêm /#/notifications. E2E cần TEST_RABBITMQ_URL để chạy worker; Docker browser đặt E2E_EXTERNAL_SERVER và E2E_BASE_URL. Artifact ảnh/log native và Docker tách thư mục.

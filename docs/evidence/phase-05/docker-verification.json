@@ -1,0 +1,11 @@
+{
+  "nginx_api_proxy_and_readiness": "PASS",
+  "broker_down_order_commit_then_notification_recovery": "PASS",
+  "duplicate_delivery_single_notification": "PASS",
+  "worker_kill_restart_backlog": "PASS",
+  "redis_down_catalog_fallback_auth_fail_closed_checkout_source_db": "PASS",
+  "postgres_restart_data_and_stock_preserved": "PASS",
+  "metrics_have_runtime_samples": "PASS",
+  "compose_restart_named_volume_and_read_state": "PASS",
+  "prometheus_api_and_worker_up": "PASS"
+}

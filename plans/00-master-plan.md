@@ -3,7 +3,7 @@ title: "E-commerce Base — Plan tổng theo phase"
 artifact: implementation-plan
 role: fullstack
 status: draft
-version: 1.7
+version: 1.8
 owner: "datnguyen <dat01687241584@gmail.com>"
 approvers: []
 last_updated: 2026-11-26
@@ -157,7 +157,7 @@ Thứ tự: chốt nghiệp vụ → thiết kế và nền tảng → tài kho�
 
 ## 8. Trạng thái thực hiện (2026-11-26)
 
-Phase 01–04 đã hoàn thành mã nguồn, tài liệu và kiểm chứng native; Docker tạm hoãn theo yêu cầu chủ dự án. Phase 05 chưa bắt đầu. Xem [progress](../docs/PROGRESS.md), [review độc lập](../docs/review-phase-01.md) và [hướng dẫn chạy](../README.md). Không có ước lượng thời gian được bổ sung.
+Phase01–05 đã hoàn thành mã nguồn và kiểm chứng. Phase05 đã bổ sung kiểm Docker thật trên stack riêng, thay trạng thái tạm hoãn trước đó. Phase06 chưa bắt đầu. Xem [progress](../docs/PROGRESS.md), [review độc lập](../docs/review-phase-01.md) và [hướng dẫn chạy](../README.md). Không có ước lượng thời gian được bổ sung.
 
 ## 9. Quy ước cấu trúc mã nguồn
 
@@ -165,4 +165,4 @@ Phase 01–04 đã hoàn thành mã nguồn, tài liệu và kiểm chứng nati
 - `viewer/`: frontend React/TypeScript, dependencies, src/E2E/config, Dockerfile/Nginx và công cụ sinh type từ WAS contract.
 - `docs/` và `plans/`: tài liệu và kế hoạch dùng chung. `scripts/` ở root chỉ giữ runner điều phối cả WAS và Viewer.
 - Root Makefile/Compose điều phối workspace; các lệnh Go trực tiếp chạy từ `was/`, lệnh npm trực tiếp chạy từ `viewer/`.
-- Theo yêu cầu mới nhất của chủ dự án, tạm hoãn kiểm chứng Docker; không dùng phần hoãn này làm blocker cho yêu cầu cơ cấu lại. Không ghi nhận Docker đã pass.
+- Yêu cầu tạm hoãn Docker trước đây đã được thay bằng kiểm chứng cùng Phase05; đã có runtime/fault/recovery evidence riêng. Các log lịch sử được giữ nguyên.

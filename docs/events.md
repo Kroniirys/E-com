@@ -53,3 +53,11 @@ Log theo event/correlation/aggregate ID. Metric outbox pending/age, confirm fail
 Đã tạo outbox_events và ghi order.created/confirmed/cancelled/status_changed, payment.completed và inventory.updated từ checkout/release cùng transaction nghiệp vụ. Cột id ánh xạ event_id khi relay tạo envelope. Payload không chứa địa chỉ đầy đủ hoặc credential; correlation_id nối với request, aggregate_version giữ thứ tự entity. Hiện chưa có publisher/consumer/RabbitMQ, published_at giữ NULL và backlog được giữ bền.
 
 Event từ product/category/admin adjustment và các cơ chế cache invalidation, relay/lease/confirms/processed_events/retry/DLQ sẽ được nối đầy đủ ở Phase 05; chưa báo hoàn thành các phần đó. Test lỗi ghi order.created chứng minh rollback cả order/payment/stock/history/idempotency và outbox trước đó trong transaction.
+
+## Hiện thực Phase 05
+
+Đã nối product.changed/category.changed từ create/update/archive, inventory.updated từ adjustment/checkout/release, tất cả cùng transaction nghiệp vụ. Category có version. Product change_kind saved/deleted; category created/updated/deleted. Cache generation được deferred trigger bump trong SQL, nên visibility và late-fill không phụ thuộc tốc độ consumer.
+
+Outbox relay publish persistent + mandatory + confirms, claim token/lease và retry. notifications.v1 nhận order/payment; catalog.v1 nhận product/category/inventory. Consumer inbox/dedupe, retry có giới hạn và DLQ/replay giữ event ID đã hoạt động. Notification owner đối chiếu DB, history theo occurred_at/aggregate_version; không overwrite order state từ event cũ. Không thêm event coupon/review khi chưa có consumer.
+
+Chi tiết semantics, topology, crash windows và CLI tại [operations](operations.md), bằng chứng tại [progress](PROGRESS.md).

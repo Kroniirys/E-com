@@ -1,0 +1,7 @@
+{
+  "api": "PASS",
+  "worker": "PASS",
+  "nginx": "PASS",
+  "prometheus_two_targets": "PASS",
+  "remaining_native_test_schemas": 0
+}

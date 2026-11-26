@@ -75,3 +75,9 @@ HTTP log có request/order/attempt/error code. Outbox log ghi event ID và corre
 ## Phase 04
 
 Modules coupons/reviews/admin được wiring qua httpapi/engagement. Orders điều phối coupon row lock giữa product và stock, lưu snapshot/usage cùng transaction; không gọi mạng hoặc consumer. Review và dashboard đọc snapshot RepeatableRead. Dashboard sum là decimal string tới Viewer BigInt; owner quản lý review riêng ở tài khoản. Không phát thêm event coupon/review khi chưa có consumer.
+
+## Phase 05
+
+API catalog có Redis cache adapter và DB-generation snapshot; checkout vẫn đọc PostgreSQL. Producer ghi outbox tại module gốc. Worker là process thật, relay và hai consumer purpose, mỗi purpose main/retry receiver bounded. AMQP publisher dùng gate context-aware, deadline handshake/write/confirm, mandatory returns và confirms; SQL không giữ transaction khi publish hoặc gọi Redis.
+
+Notifications module cung cấp list/unread/read theo owner. Worker readiness kiểm broker/DB/Redis, API readiness không phụ thuộc broker; Prometheus scrape metrics API/worker trên mạng local/internal. Compose đã được kiểm chứng thực tế, không còn ở trạng thái tạm hoãn. [Operations](operations.md).

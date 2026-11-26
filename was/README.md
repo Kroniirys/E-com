@@ -18,3 +18,5 @@ Phase 02 có module auth/users/catalog/inventory và schema v2. API cần `AUTH_
 Integration test dùng `TEST_DATABASE_URL` có database tên `*_test` và `TEST_REDIS_URL`; xem [hướng dẫn workspace](../README.md). Dockerfile backend dùng build context chính thư mục `was/`; Docker đang tạm hoãn kiểm chứng.
 
 Phase 03 thêm cart/orders/payments, schema v3, money/idempotency/outbox. Cart/checkout và lifecycle dùng chung transaction/row lock; mock flag chỉ cho local/test. Outbox chưa publish. Xem [state machine](../docs/order-payment-state-machine.md) và [kiểm chứng](../docs/PROGRESS.md).
+
+Phase05: schema5, cache/metrics, worker relay/consumer và cmd/events inspect/replay. Native worker cần RABBITMQ_URL/REDIS_URL/BROKER_PREFIX; API không cần broker để checkout. Xem [operations](../docs/operations.md).

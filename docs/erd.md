@@ -120,3 +120,9 @@ flowchart TD
 Migration000004 bổ sung coupons/coupon_usages/reviews, tổng24bảng ứng dụng. Coupon code unique upper/trim, version điều khoản và used_count tách biệt. Coupon usage unique/order. Orders thêm coupon_snapshot nullable và discount0..subtotal, giữ công thức total. Review unique user/product gồm bản soft-delete; FK order/user/product, rating1–5/content1–2000, metadata moderation.
 
 Index coupon created, review public/product/owner/admin, orders created và products created phục vụ danh sách/dashboard. Rollback4 bị chặn nếu có coupon snapshot/usage hoặc review, tránh xóa audit/giao dịch; dữ liệu thật cần migration sửa tiến. Không tạo thêm event coupon/review khi chưa có consumer.
+
+## Schema v5 — Phase 05
+
+Migration000005 thêm catalog_generation, processed_events và notifications, tổng27bảng ứng dụng. Deferred constraint trigger trên products/categories/images/assignments/inventory bump generation tại commit; reader RepeatableRead lấy generation làm cache key. Categories thêm version. Outbox thêm claim_token/next_attempt_at/last_error; mark/release có điều kiện token/lease.
+
+processed_events PK(consumer,event_id), notification unique(user_id,event_id,kind) cùng transaction. Notification có order FK, occurred_at/aggregate_version và read_at; owner index và unread partial index. Down5 từ chối nếu có inbox/notification để tránh xóa lịch sử.

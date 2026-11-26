@@ -1,6 +1,6 @@
 # E-commerce Base
 
-Workspace tách rõ hai phần: **WAS là backend Go**, **Viewer là frontend React**. Phase 04 đã bổ sung coupon, review/moderation và dashboard trên nền mua hàng COD/mock, tài khoản/catalog/tồn kho; Docker hiện được tạm hoãn theo yêu cầu.
+Workspace tách rõ hai phần: **WAS là backend Go**, **Viewer là frontend React**. Phase 05 đã có cache Redis, relay/consumer RabbitMQ, notification và monitoring trên nền nghiệp vụ Phase01–04. Docker đã được kiểm chứng trong Phase05.
 
 ## Cấu trúc
 
@@ -135,18 +135,13 @@ make TEST_DATABASE_URL='postgres://user:password@localhost:5432/ecom_test?sslmod
 
 Guard từ chối tên DB khác, URL query ghi đè database và path bất thường. Dữ liệu cần giữ phải backup, kiểm tra tương thích và ưu tiên migration sửa tiến; không reset hoặc xóa volume để che lỗi.
 
-## Docker — tạm hoãn kiểm chứng
+## Docker — đã kiểm chứng Phase 05
 
-Dockerfile/Compose đã được điều chỉnh đường dẫn cho WAS/Viewer. Trong lượt cơ cấu lại này không chạy Docker build, Compose config hoặc kiểm tra runtime Docker. Khi cần quay lại kiểm chứng:
+Tạo .env mới bằng `python3 scripts/setup-local.py` rồi chạy `docker compose up -d --build`. Với .env cũ, bổ sung RABBITMQ_PASSWORD và RABBITMQ_URL tương ứng, giữ nguyên secret/tài khoản/dữ liệu đã có. Nếu process hiện tại chưa nhận nhóm Docker, có thể dùng `sg docker -c 'docker compose up -d --build'`; không cần đổi quyền socket.
 
-```bash
-cp .env.example .env
-docker compose up --build
-```
+Stack mặc định gồm PostgreSQL, migrate, seed, app, Viewer, Redis, RabbitMQ, worker và Prometheus. URL mặc định: Viewer localhost:8081, API localhost:8080, worker localhost:8082, Prometheus localhost:9090, RabbitMQ management localhost:15672. Các port chỉ bind localhost. Metrics ở /internal/metrics trên API/worker; không proxy metrics qua Viewer.
 
-Backend build context là `was/`; Viewer build context là root để lấy contract từ WAS. Service Compose vẫn giữ tên `app`/`frontend` để không đổi wiring ngoài yêu cầu. Chuỗi startup vẫn PostgreSQL → migrate → seed → app → frontend. URL mặc định khi chạy Compose: Viewer localhost:8081, API localhost:8080.
-
-`docker compose down` giữ named volume. Redis là dependency mặc định cho auth Phase 02; profile `infrastructure` giữ RabbitMQ/worker. Worker mới bootstrap/shutdown, chưa consume message. Local credentials chỉ là mẫu; password có ký tự đặc biệt trong DB URL phải được URL-encode.
+`docker compose down` giữ named volume. Không dùng down -v hoặc đổi credential rồi reset volume để xử lý lỗi. Phase05 đã kiểm fresh build/start, proxy Nginx, broker/Redis/PostgreSQL/worker failure recovery, restart giữ dữ liệu và Prometheus trên project riêng. Native và Docker browser evidence lưu tách biệt; xem [vận hành](docs/operations.md) và [progress](docs/PROGRESS.md).
 
 ## Tài liệu
 
@@ -178,7 +173,7 @@ Inventory adjustment cần Idempotency-Key 16–128 ký tự chữ/số/gạch n
 
 Checkout/cancel/status/attempt/simulate cần Idempotency-Key. Viewer lưu key và request đang chờ theo tài khoản trong sessionStorage, không lưu token. Nếu mất response, nút kiểm tra lại giữ đúng intent cả sau reload; lỗi xác thực/rate limit không làm mất key. Server lưu kết quả cùng mutation, replay không tạo đơn/thanh toán/hoàn kho trùng. Snapshot sản phẩm/giá/địa chỉ/shipping giữ nguyên sau khi dữ liệu nguồn đổi.
 
-Order/payment/inventory events được ghi vào outbox trong cùng transaction. Chưa có publisher/notification; Phase 05 sẽ xử lý backlog. Sau khi build, có thể kiểm chứng kill/restart API test bằng `python3 scripts/phase03-restart.py` với TEST_DATABASE_URL, TEST_REDIS_URL và E2E_EVIDENCE_DIR; script tạo/dọn schema riêng, dùng port 18081, không dừng API khác.
+Order/payment/inventory events được ghi vào outbox trong cùng transaction. Tại Phase03 chưa có publisher/notification; Phase05 đã bổ sung relay/consumer để xử lý backlog. Sau khi build, có thể kiểm chứng kill/restart API test bằng `python3 scripts/phase03-restart.py` với TEST_DATABASE_URL, TEST_REDIS_URL và E2E_EVIDENCE_DIR; script tạo/dọn schema riêng, dùng port 18081, không dừng API khác.
 
 ## Phase 04 — Coupon, đánh giá và tổng quan
 
@@ -188,4 +183,12 @@ Khách có đơn Delivered mới được review ở trang sản phẩm. Một r
 
 Dashboard lọc theo ngày tạo, `from` bao gồm và `to` loại trừ, timezone IANA (mặc định UTC). Tổng tiền chỉ gồm Delivered + Paid; trả chuỗi decimal chính xác và Viewer hiển thị bằng BigInt, không giới hạn tổng theo trần một order.
 
-Schema hiện tại v4. Muốn thêm dữ liệu mẫu coupon và review có đơn Delivered thật, đặt `SEED_PHASE04_DATA=true` cùng `SEED_DEMO_DATA=true`, rồi chạy seed. Đây là opt-in: cần cart demo trống và SKU BASE-REVIEW/code BASE10 chưa bị dùng; toàn bộ fixture được tạo qua service trong transaction, chạy lại không nhân bản. Không bật tùy chọn này trên dữ liệu cần giữ nếu chưa xem phạm vi fixture. Docker vẫn tạm hoãn.
+Phase04 sử dụng schema v4; schema hiện tại là v5. Muốn thêm dữ liệu mẫu coupon và review có đơn Delivered thật, đặt `SEED_PHASE04_DATA=true` cùng `SEED_DEMO_DATA=true`, rồi chạy seed. Đây là opt-in: cần cart demo trống và SKU BASE-REVIEW/code BASE10 chưa bị dùng; toàn bộ fixture được tạo qua service trong transaction, chạy lại không nhân bản. Không bật tùy chọn này trên dữ liệu cần giữ nếu chưa xem phạm vi fixture. Docker đã được kiểm chứng bổ sung trong Phase05.
+
+## Phase 05 — Cache, worker và notification
+
+Native API cần Redis cho auth; CACHE_ENABLED=false chỉ bypass cache catalog. Worker cần DATABASE_URL, REDIS_URL, RABBITMQ_URL và BROKER_PREFIX; production bắt buộc amqps/rediss. Native dùng `make worker`; sự kiện đã commit được publish/consume tự động, không chạy mutation stock/payment/coupon qua broker.
+
+Integration và E2E cần thêm TEST_RABBITMQ_URL bên cạnh TEST_DATABASE_URL (*_test) và TEST_REDIS_URL. Mỗi test có schema/namespace riêng. Runner E2E khởi chạy API + worker, kiểm readiness/version và dọn topology test; không dùng RabbitMQ queue vận hành. Thông báo ở /#/notifications, có unread/read/làm mới; không cần WebSocket.
+
+CLI sau build: was/bin/events inspect notifications, was/bin/events replay notifications (hoặc catalog), mỗi lần một message DLQ, giữ event ID. Xem [hướng dẫn retry/cache/metrics và phục hồi](docs/operations.md). Dữ liệu producer/inbox/notification đã bền; benchmark, backup/restore và nghiệm thu tổng hợp vẫn thuộc Phase06.
