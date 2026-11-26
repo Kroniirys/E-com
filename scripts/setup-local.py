@@ -7,6 +7,8 @@ target = root/".env"
 if target.exists():
     raise SystemExit(".env already exists; refusing to overwrite local configuration.")
 values = {"AUTH_JWT_SECRET": secrets.token_hex(32), "SEED_ADMIN_PASSWORD": secrets.token_urlsafe(20), "SEED_CUSTOMER_PASSWORD": secrets.token_urlsafe(20)}
+values["RABBITMQ_PASSWORD"] = secrets.token_hex(24)
+values["RABBITMQ_URL"] = "amqp://ecom:" + values["RABBITMQ_PASSWORD"] + "@127.0.0.1:5672/"
 lines = []
 for line in (root/".env.example").read_text().splitlines():
     key = line.split("=", 1)[0]

@@ -17,26 +17,29 @@ import (
 	"ecommerce.local/base/internal/modules/catalog"
 	"ecommerce.local/base/internal/modules/coupons"
 	"ecommerce.local/base/internal/modules/inventory"
+	"ecommerce.local/base/internal/modules/notifications"
 	"ecommerce.local/base/internal/modules/orders"
 	"ecommerce.local/base/internal/modules/reviews"
 	"ecommerce.local/base/internal/modules/users"
+	"ecommerce.local/base/internal/platform/metrics"
 	"ecommerce.local/base/internal/platform/problem"
 
 	"github.com/gin-gonic/gin"
 )
 
 type API struct {
-	Coupons      *coupons.Service
-	Reviews      *reviews.Service
-	Dashboard    *admin.Service
-	Cart         *cart.Service
-	Orders       *orders.Service
-	Auth         *auth.Service
-	Users        *users.Service
-	Catalog      *catalog.Service
-	Inventory    *inventory.Service
-	Origins      []string
-	SecureCookie bool
+	Notifications *notifications.Service
+	Coupons       *coupons.Service
+	Reviews       *reviews.Service
+	Dashboard     *admin.Service
+	Cart          *cart.Service
+	Orders        *orders.Service
+	Auth          *auth.Service
+	Users         *users.Service
+	Catalog       *catalog.Service
+	Inventory     *inventory.Service
+	Origins       []string
+	SecureCookie  bool
 }
 
 func fail(c *gin.Context, err error) {
@@ -167,6 +170,10 @@ func (a *API) require(admin bool) gin.HandlerFunc {
 	}
 }
 func (a *API) Register(r *gin.Engine) {
+	if a.Notifications != nil {
+		a.notificationRoutes(r)
+		r.GET("/internal/metrics", gin.WrapF(metrics.Handler(a.Notifications.DB)))
+	}
 	if a.Coupons != nil && a.Reviews != nil && a.Dashboard != nil {
 		a.engagement(r)
 	}

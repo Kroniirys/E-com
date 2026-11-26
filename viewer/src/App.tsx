@@ -6,6 +6,7 @@ import { useSession } from './session'
 import { useRoute } from './hooks'
 import { Failure, Loading } from './ui'
 import AccountPage from './pages/AccountPage'
+import NotificationsPage from './pages/NotificationsPage'
 import CartPage from './pages/CartPage'
 import OrdersPage from './pages/OrdersPage'
 import AdminPage from './pages/AdminPage'
@@ -43,6 +44,7 @@ function Workspace() {
   else if (route.startsWith('/products/'))
     content = <ProductPage key={route} id={route.slice('/products/'.length)} />
   else if (
+    route === '/notifications' ||
     route === '/account' ||
     route === '/cart' ||
     route === '/orders' ||
@@ -73,6 +75,7 @@ function Workspace() {
           <Failure message="Bạn không có quyền truy cập khu vực quản trị." />
         </main>
       )
+    else if (route === '/notifications') content = <NotificationsPage key={session.user.id} />
     else if (route === '/account') content = <AccountPage key={session.user.id} />
     else if (route === '/cart') content = <CartPage key={session.user.id} />
     else if (route === '/orders' || route.startsWith('/orders/'))
@@ -122,6 +125,9 @@ function Workspace() {
             </a>
             {session.user ? (
               <>
+                <a href="#/notifications" className="hover:underline">
+                  Thông báo
+                </a>
                 <a href="#/cart" className="hover:underline">
                   Giỏ hàng
                 </a>
@@ -166,7 +172,7 @@ function Workspace() {
       )}
       {content}
       <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-[#dae1d4] px-6 py-7 text-xs text-[#68796f] lg:px-10">
-        <span>E-commerce Base · Phase 04</span>
+        <span>E-commerce Base · Phase 05</span>
         <a className="underline" href="/api-docs/index.html">
           Tài liệu API ↗
         </a>

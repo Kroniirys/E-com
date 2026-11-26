@@ -5,6 +5,15 @@ package integration
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"testing"
+	"time"
+
 	"ecommerce.local/base/internal/bootstrap"
 	"ecommerce.local/base/internal/database"
 	"ecommerce.local/base/internal/modules/admin"
@@ -15,15 +24,8 @@ import (
 	"ecommerce.local/base/internal/modules/users"
 	"ecommerce.local/base/internal/platform/problem"
 	"ecommerce.local/base/migrations"
-	"encoding/hex"
-	"encoding/json"
-	"fmt"
+
 	"github.com/google/uuid"
-	"strings"
-	"sync"
-	"sync/atomic"
-	"testing"
-	"time"
 )
 
 func couponFixture(t *testing.T, f *phaseFixture, limit int64) coupons.Coupon {
@@ -342,7 +344,7 @@ func TestPhase04RollbackGuardAndModerationHTTP(t *testing.T) {
 	m, e := migrations.New(f.DSN)
 	requireOK(t, e)
 	defer m.Close()
-	if e = m.Steps(-1); e == nil {
+	if e = m.Steps(-2); e == nil {
 		t.Fatal("rollback discarded review data")
 	}
 	if count(t, f, "reviews", "id=?", r.ID) != 1 {

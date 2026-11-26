@@ -5,7 +5,11 @@ export default defineConfig({
   workers: 1,
   retries: 0,
   reporter: [['list'], ['html', { open: 'never' }]],
-  use: { actionTimeout: 10000, baseURL: 'http://127.0.0.1:5173', trace: 'retain-on-failure' },
+  use: {
+    actionTimeout: 10000,
+    baseURL: process.env.E2E_BASE_URL ?? 'http://127.0.0.1:5173',
+    trace: 'retain-on-failure',
+  },
   projects: [
     {
       name: 'chromium',
@@ -17,9 +21,11 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: 'npm run dev -- --host 127.0.0.1 --port 5173 --strictPort',
-    url: 'http://127.0.0.1:5173',
-    reuseExistingServer: false,
-  },
+  webServer: process.env.E2E_EXTERNAL_SERVER
+    ? undefined
+    : {
+        command: 'npm run dev -- --host 127.0.0.1 --port 5173 --strictPort',
+        url: 'http://127.0.0.1:5173',
+        reuseExistingServer: false,
+      },
 })

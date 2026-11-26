@@ -2,6 +2,7 @@ package catalog
 
 import (
 	"context"
+	"encoding/json"
 	"net/url"
 	"regexp"
 	"sort"
@@ -11,7 +12,10 @@ import (
 
 	"ecommerce.local/base/internal/modules/inventory"
 	"ecommerce.local/base/internal/modules/users"
+	"ecommerce.local/base/internal/platform/cache"
+	"ecommerce.local/base/internal/platform/outbox"
 	"ecommerce.local/base/internal/platform/problem"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -22,6 +26,7 @@ const MaxMoney int64 = 9000000000000
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
 
 type Category struct {
+	Version   int64      `json:"-"`
 	ID        string     `json:"id"`
 	Name      string     `json:"name"`
 	Slug      string     `json:"slug"`
@@ -81,9 +86,12 @@ type ImageInput struct {
 	Alt       string `json:"alt"`
 	SortOrder int    `json:"sort_order"`
 }
-type Service struct{ DB *gorm.DB }
+type Service struct {
+	DB    *gorm.DB
+	Cache *cache.Cache
+}
 
-func New(db *gorm.DB) *Service { return &Service{db} }
+func New(db *gorm.DB) *Service { return &Service{DB: db} }
 func validateCategory(in *CategoryInput) error {
 	in.Name = strings.TrimSpace(in.Name)
 	in.Slug = strings.ToLower(strings.TrimSpace(in.Slug))
@@ -95,7 +103,7 @@ func validateCategory(in *CategoryInput) error {
 	}
 	return nil
 }
-func (s *Service) Categories(ctx context.Context, page users.Page) (users.List[Category], error) {
+func (s *Service) categories(ctx context.Context, page users.Page) (users.List[Category], error) {
 	result := users.List[Category]{Items: []Category{}, Page: page.Number, PageSize: page.Size}
 	q := s.DB.WithContext(ctx).Model(&Category{}).Where("deleted_at IS NULL")
 	if page.Query != "" {
@@ -107,7 +115,7 @@ func (s *Service) Categories(ctx context.Context, page users.Page) (users.List[C
 	err := q.Order("name ASC, id ASC").Limit(page.Size).Offset((page.Number - 1) * page.Size).Find(&result.Items).Error
 	return result, err
 }
-func (s *Service) Category(ctx context.Context, id string) (Category, error) {
+func (s *Service) category(ctx context.Context, id string) (Category, error) {
 	var result Category
 	if !users.ValidID(id) {
 		return result, problem.Missing()
@@ -124,15 +132,23 @@ func (s *Service) SaveCategory(ctx context.Context, id string, in CategoryInput)
 	}
 	var result Category
 	if id == "" {
-		result = Category{ID: uuid.NewString(), Name: in.Name, Slug: in.Slug}
-		err := s.DB.WithContext(ctx).Create(&result).Error
+		result = Category{ID: uuid.NewString(), Name: in.Name, Slug: in.Slug, Version: 1}
+		err := s.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+			if e := tx.Create(&result).Error; e != nil {
+				return e
+			}
+			return outbox.Write(tx, "category", result.ID, 1, "category.changed", "", map[string]any{"category_id": result.ID, "category_version": 1, "change_kind": "created"})
+		})
 		return result, err
 	}
 	err := s.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("id=? AND deleted_at IS NULL", id).Take(&result).Error; err != nil {
 			return err
 		}
-		return tx.Model(&Category{}).Where("id=?", id).Updates(map[string]any{"name": in.Name, "slug": in.Slug, "updated_at": time.Now().UTC()}).Error
+		if e := tx.Model(&Category{}).Where("id=?", id).Updates(map[string]any{"name": in.Name, "slug": in.Slug, "version": gorm.Expr("version+1"), "updated_at": time.Now().UTC()}).Error; e != nil {
+			return e
+		}
+		return outbox.Write(tx, "category", id, result.Version+1, "category.changed", "", map[string]any{"category_id": id, "category_version": result.Version + 1, "change_kind": "updated"})
 	})
 	if err != nil {
 		return result, err
@@ -151,7 +167,10 @@ func (s *Service) DeleteCategory(ctx context.Context, id string) error {
 		if err := tx.Exec("DELETE FROM product_categories WHERE category_id=?", id).Error; err != nil {
 			return err
 		}
-		return tx.Model(&Category{}).Where("id=?", id).Updates(map[string]any{"deleted_at": time.Now().UTC(), "updated_at": time.Now().UTC()}).Error
+		if e := tx.Model(&Category{}).Where("id=?", id).Updates(map[string]any{"deleted_at": time.Now().UTC(), "version": gorm.Expr("version+1"), "updated_at": time.Now().UTC()}).Error; e != nil {
+			return e
+		}
+		return outbox.Write(tx, "category", id, result.Version+1, "category.changed", "", map[string]any{"category_id": id, "category_version": result.Version + 1, "change_kind": "deleted"})
 	})
 }
 func validateProduct(in *ProductInput) error {
@@ -204,7 +223,7 @@ func hydrate(db *gorm.DB, p *Product) error {
 	}
 	return db.Table("product_categories AS pc").Joins("JOIN categories c ON c.id=pc.category_id AND c.deleted_at IS NULL").Where("pc.product_id=?", p.ID).Order("pc.category_id ASC").Pluck("pc.category_id", &p.CategoryIDs).Error
 }
-func (s *Service) Product(ctx context.Context, id string, admin bool) (Product, error) {
+func (s *Service) product(ctx context.Context, id string, admin bool) (Product, error) {
 	var result Product
 	if !users.ValidID(id) {
 		return result, problem.Missing()
@@ -216,7 +235,7 @@ func (s *Service) Product(ctx context.Context, id string, admin bool) (Product, 
 	err := hydrate(db, &result)
 	return result, err
 }
-func (s *Service) Products(ctx context.Context, page users.Page, admin bool) (users.List[Product], error) {
+func (s *Service) products(ctx context.Context, page users.Page, admin bool) (users.List[Product], error) {
 	result := users.List[Product]{Items: []Product{}, Page: page.Number, PageSize: page.Size}
 	db := s.DB.WithContext(ctx)
 	q := productQuery(db, admin)
@@ -303,7 +322,11 @@ func (s *Service) SaveProduct(ctx context.Context, id string, in ProductInput) (
 				return err
 			}
 		}
-		return nil
+		var version int64
+		if e := tx.Table("products").Where("id=?", id).Pluck("version", &version).Error; e != nil {
+			return e
+		}
+		return outbox.Write(tx, "product", id, version, "product.changed", "", map[string]any{"product_id": id, "product_version": version, "change_kind": "saved"})
 	})
 	if err != nil {
 		return Product{}, err
@@ -314,12 +337,35 @@ func (s *Service) DeleteProduct(ctx context.Context, id string) error {
 	if !users.ValidID(id) {
 		return problem.Missing()
 	}
-	result := s.DB.WithContext(ctx).Model(&Product{}).Where("id=? AND deleted_at IS NULL", id).Updates(map[string]any{"deleted_at": time.Now().UTC(), "status": "Inactive", "version": gorm.Expr("version+1"), "updated_at": time.Now().UTC()})
-	if result.Error != nil {
-		return result.Error
+	return s.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var p Product
+		if e := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("id=? AND deleted_at IS NULL", id).Take(&p).Error; e != nil {
+			return e
+		}
+		if e := tx.Model(&Product{}).Where("id=?", id).Updates(map[string]any{"deleted_at": time.Now().UTC(), "status": "Inactive", "version": p.Version + 1, "updated_at": time.Now().UTC()}).Error; e != nil {
+			return e
+		}
+		return outbox.Write(tx, "product", id, p.Version+1, "product.changed", "", map[string]any{"product_id": id, "product_version": p.Version + 1, "change_kind": "deleted"})
+	})
+}
+
+func (s *Service) Categories(ctx context.Context, p users.Page) (users.List[Category], error) {
+	raw, _ := json.Marshal(p)
+	return cache.Read(ctx, s.DB, s.Cache, "categories:"+string(raw), 30*time.Second, func(tx *gorm.DB) (users.List[Category], error) { return New(tx).categories(ctx, p) })
+}
+func (s *Service) Category(ctx context.Context, id string) (Category, error) {
+	return cache.Read(ctx, s.DB, s.Cache, "category:"+id, 60*time.Second, func(tx *gorm.DB) (Category, error) { return New(tx).category(ctx, id) })
+}
+func (s *Service) Product(ctx context.Context, id string, admin bool) (Product, error) {
+	if admin {
+		return s.product(ctx, id, true)
 	}
-	if result.RowsAffected != 1 {
-		return problem.Missing()
+	return cache.Read(ctx, s.DB, s.Cache, "product:"+id, 60*time.Second, func(tx *gorm.DB) (Product, error) { return New(tx).product(ctx, id, false) })
+}
+func (s *Service) Products(ctx context.Context, p users.Page, admin bool) (users.List[Product], error) {
+	if admin {
+		return s.products(ctx, p, true)
 	}
-	return nil
+	raw, _ := json.Marshal(p)
+	return cache.Read(ctx, s.DB, s.Cache, "products:"+string(raw), 30*time.Second, func(tx *gorm.DB) (users.List[Product], error) { return New(tx).products(ctx, p, false) })
 }

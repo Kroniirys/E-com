@@ -7,7 +7,8 @@ RUN CGO_ENABLED=0 go build -trimpath -o /out/api ./cmd/api && \
     CGO_ENABLED=0 go build -trimpath -o /out/worker ./cmd/worker && \
     CGO_ENABLED=0 go build -trimpath -o /out/migrate ./cmd/migrate && \
     CGO_ENABLED=0 go build -trimpath -o /out/seed ./cmd/seed && \
-    CGO_ENABLED=0 go build -trimpath -o /out/healthcheck ./cmd/healthcheck
+    CGO_ENABLED=0 go build -trimpath -o /out/healthcheck ./cmd/healthcheck && \
+    CGO_ENABLED=0 go build -trimpath -o /out/events ./cmd/events
 
 FROM debian:bookworm-slim AS runtime
 WORKDIR /app

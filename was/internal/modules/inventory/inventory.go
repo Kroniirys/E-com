@@ -3,17 +3,20 @@ package inventory
 import (
 	"context"
 	"crypto/sha256"
-	"ecommerce.local/base/internal/modules/users"
-	"ecommerce.local/base/internal/platform/problem"
 	"encoding/hex"
 	"encoding/json"
-	"github.com/google/uuid"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 	"regexp"
 	"strings"
 	"time"
 	"unicode/utf8"
+
+	"ecommerce.local/base/internal/modules/users"
+	"ecommerce.local/base/internal/platform/outbox"
+	"ecommerce.local/base/internal/platform/problem"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 const MaxQuantity int64 = 9000000000000
@@ -146,6 +149,9 @@ func (s *Service) Adjust(ctx context.Context, actorID, key string, input Adjustm
 		movement := Transaction{ID: uuid.NewString(), ProductID: input.ProductID, ActorID: actorID, Delta: input.Delta, BeforeQuantity: before, AfterQuantity: result.Quantity, Reason: input.Reason, Reference: entry.ID}
 		if err := tx.Create(&movement).Error; err != nil {
 			return err
+		}
+		if e := outbox.Write(tx, "inventory", input.ProductID, result.Version, "inventory.updated", "", map[string]any{"product_id": input.ProductID, "quantity": result.Quantity, "inventory_version": result.Version}); e != nil {
+			return e
 		}
 		response, _ := json.Marshal(result)
 		return tx.Exec("UPDATE idempotency_records SET response_status=200,response_body=?::jsonb WHERE id=?", string(response), entry.ID).Error

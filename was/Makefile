@@ -11,6 +11,7 @@ build:
 	CGO_ENABLED=0 $(GO) build -trimpath -o bin/migrate ./cmd/migrate
 	CGO_ENABLED=0 $(GO) build -trimpath -o bin/seed ./cmd/seed
 	CGO_ENABLED=0 $(GO) build -trimpath -o bin/healthcheck ./cmd/healthcheck
+	CGO_ENABLED=0 $(GO) build -trimpath -o bin/events ./cmd/events
 
 run:
 	$(GO) run ./cmd/api

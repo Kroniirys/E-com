@@ -160,7 +160,7 @@ func TestPhase03StockFiveTwentyBuyers(t *testing.T) {
 	for e := range failures {
 		t.Error(e)
 	}
-	if success.Load() != 5 || quantity(t, f, p) != 0 || count(t, f, "orders", "true") != 5 || count(t, f, "inventory_transactions", "reason='order.checkout'") != 5 || count(t, f, "outbox_events", "type='order.created'") != 5 || count(t, f, "outbox_events", "type='inventory.updated'") != 5 {
+	if success.Load() != 5 || quantity(t, f, p) != 0 || count(t, f, "orders", "true") != 5 || count(t, f, "inventory_transactions", "reason='order.checkout'") != 5 || count(t, f, "outbox_events", "type='order.created'") != 5 || count(t, f, "outbox_events", "type='inventory.updated' AND correlation_id='concurrent-buyers'") != 5 {
 		t.Fatalf("oversell or orphan effects: success=%d", success.Load())
 	}
 	t.Log("SQL: 20 buyers, 5 orders, stock=0, checkout histories=5, order.created=5, inventory.updated=5")
@@ -274,11 +274,12 @@ func TestPhase03QuoteValidationRollbackAndCartBoundaries(t *testing.T) {
 	}
 	_, e = f.Inventory.Adjust(ctx, f.Admin.ID, uuid.NewString(), inventory.Adjustment{ProductID: p2, Delta: 5, Reason: "Restock"})
 	requireOK(t, e)
+	beforeEvents := count(t, f, "outbox_events", "true")
 	requireOK(t, f.DB.Exec("ALTER TABLE outbox_events ADD CONSTRAINT reject_order_event CHECK(type<>'order.created')").Error)
 	if _, e = s.Checkout(ctx, u.ID, uuid.NewString(), in, ""); e == nil {
 		t.Fatal("injected failure did not fail")
 	}
-	if quantity(t, f, p) != 5 || quantity(t, f, p2) != 5 || count(t, f, "orders", "true") != 0 || count(t, f, "payments", "true") != 0 || count(t, f, "outbox_events", "true") != 0 || count(t, f, "idempotency_records", "operation='orders.checkout'") != 0 || count(t, f, "cart_items", "true") != 2 {
+	if quantity(t, f, p) != 5 || quantity(t, f, p2) != 5 || count(t, f, "orders", "true") != 0 || count(t, f, "payments", "true") != 0 || count(t, f, "outbox_events", "true") != beforeEvents || count(t, f, "idempotency_records", "operation='orders.checkout'") != 0 || count(t, f, "cart_items", "true") != 2 {
 		t.Fatal("transaction rollback left partial effects")
 	}
 	requireOK(t, f.DB.Exec("ALTER TABLE outbox_events DROP CONSTRAINT reject_order_event").Error)
@@ -659,10 +660,9 @@ func TestPhase03UpgradeFromTwoAndIsolatedRollback(t *testing.T) {
 	requireOK(t, database.Seed(ctx, db, "Upgrade Store", 30000))
 	admin, e := users.Insert(db, users.Input{Email: "upgrade-admin@phase03.test", Name: "Upgrade Admin", Role: "Admin", Status: "Active"}, "unused-migration-test-hash")
 	requireOK(t, e)
-	product, e := catalog.New(db).SaveProduct(ctx, "", catalog.ProductInput{SKU: "UPGRADE-3", Name: "Existing product", PriceMinor: 1000, OriginalPriceMinor: 1000, Status: "Active", Images: []catalog.ImageInput{}, CategoryIDs: []string{}})
-	requireOK(t, e)
-	_, e = inventory.New(db).Adjust(ctx, admin.ID, uuid.NewString(), inventory.Adjustment{ProductID: product.ID, Delta: 4, Reason: "Existing stock"})
-	requireOK(t, e)
+	product := catalog.Product{ID: uuid.NewString()}
+	requireOK(t, db.Exec("INSERT INTO products(id,sku,name,price_minor,original_price_minor,status) VALUES (?,'UPGRADE-3','Existing product',1000,1000,'Active')", product.ID).Error)
+	requireOK(t, db.Exec("INSERT INTO inventory(product_id,quantity,version) VALUES (?,4,1)", product.ID).Error)
 	requireOK(t, migrations.Up(m))
 	requireOK(t, database.CheckReady(ctx, db))
 	var before int64

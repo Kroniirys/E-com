@@ -12,6 +12,7 @@ import (
 	"ecommerce.local/base/api"
 	"ecommerce.local/base/internal/config"
 	"ecommerce.local/base/internal/database"
+	"ecommerce.local/base/internal/platform/metrics"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -67,6 +68,7 @@ func router(cfg config.Config, deps dependencies, log *slog.Logger, registration
 			if path == "" {
 				path = "unmatched"
 			}
+			metrics.HTTP(path, c.Writer.Status(), time.Since(start))
 			log.Info("http request", "request_id", id, "method", c.Request.Method, "route", path, "status", c.Writer.Status(), "order_id", c.GetString("order_id"), "attempt_id", c.GetString("attempt_id"), "error_code", c.GetString("error_code"), "duration_ms", time.Since(start).Milliseconds())
 		}()
 		c.Next()

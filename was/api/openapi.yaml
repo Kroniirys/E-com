@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "E-commerce Base API",
-    "version": "0.4.0",
-    "description": "Phase 01–04 đã triển khai. Cache, publisher/consumer và notification Phase 05 vẫn là contract dự kiến."
+    "version": "0.5.0",
+    "description": "E-commerce Base Phase01–05, các endpoint đã hiện thực; worker và metrics trên network nội bộ/local."
   },
   "servers": [
     {
@@ -30,7 +30,7 @@
     },
     {
       "name": "Phase 05",
-      "description": "Contract dự kiến, chưa triển khai"
+      "description": "Cache, reliable worker và notification đã triển khai"
     }
   ],
   "paths": {
@@ -7845,12 +7845,12 @@
       "get": {
         "operationId": "get_api_v1_notifications",
         "summary": "Thông báo",
-        "description": "CHƯA TRIỂN KHAI: Phase 05. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase05. Notification từ event đã commit, kiểm tra ownership phía server.",
         "tags": [
           "Phase 05"
         ],
         "x-phase": 5,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -7886,13 +7886,18 @@
                         "total": {
                           "type": "integer",
                           "minimum": 0
+                        },
+                        "unread_count": {
+                          "type": "integer",
+                          "minimum": 0
                         }
                       },
                       "required": [
                         "items",
                         "page",
                         "page_size",
-                        "total"
+                        "total",
+                        "unread_count"
                       ],
                       "additionalProperties": false
                     }
@@ -8004,12 +8009,12 @@
       "post": {
         "operationId": "post_api_v1_notifications_id_read",
         "summary": "Đánh dấu đã đọc",
-        "description": "CHƯA TRIỂN KHAI: Phase 05. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase05. Notification từ event đã commit, kiểm tra ownership phía server.",
         "tags": [
           "Phase 05"
         ],
         "x-phase": 5,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -8017,25 +8022,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Thành công",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/Notification"
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
           "400": {
             "description": "Đầu vào không hợp lệ",
             "content": {
@@ -8105,6 +8091,9 @@
                 }
               }
             }
+          },
+          "204": {
+            "description": "Đã đọc, giữ thời điểm đọc đầu tiên"
           }
         },
         "parameters": [
@@ -8509,6 +8498,41 @@
             }
           }
         ]
+      }
+    },
+    "/internal/metrics": {
+      "get": {
+        "operationId": "get_internal_metrics",
+        "summary": "Prometheus metrics local/internal",
+        "tags": [
+          "Phase 05"
+        ],
+        "x-phase": 5,
+        "x-implemented": true,
+        "x-required-role": "local",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Metrics cho scrape nội bộ",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không có quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -9485,14 +9509,35 @@
             "type": "string",
             "format": "uuid"
           },
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
           "title": {
             "type": "string"
           },
           "body": {
             "type": "string"
           },
-          "is_read": {
-            "type": "boolean"
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "aggregate_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "read_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           },
           "created_at": {
             "type": "string",
@@ -9501,9 +9546,14 @@
         },
         "required": [
           "id",
+          "event_id",
+          "kind",
           "title",
           "body",
-          "is_read",
+          "order_id",
+          "occurred_at",
+          "aggregate_version",
+          "read_at",
           "created_at"
         ],
         "additionalProperties": false
