@@ -15,10 +15,11 @@ import (
 	"ecommerce.local/base/internal/modules/catalog"
 	"ecommerce.local/base/internal/modules/users"
 	"ecommerce.local/base/internal/platform/problem"
+
 	"github.com/gin-gonic/gin"
 )
 
-func TestPhase02ImplementedContractMatchesRouter(t *testing.T) {
+func TestImplementedContractMatchesRouter(t *testing.T) {
 	f := fixture(t)
 	var spec struct {
 		Paths map[string]map[string]struct {
@@ -53,8 +54,8 @@ func TestPhase02ImplementedContractMatchesRouter(t *testing.T) {
 			}
 		}
 	}
-	if count != 36 {
-		t.Fatalf("expected36 implemented routes, got%d", count)
+	if count != 50 {
+		t.Fatalf("expected50 implemented routes, got%d", count)
 	}
 }
 

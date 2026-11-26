@@ -19,3 +19,5 @@ Dev/build tự chuẩn bị Swagger assets và sinh `src/api.generated.ts` từ 
 Các màn hình Phase 02: storefront/detail, đăng ký/đăng nhập, account/profile/address/password và admin users/products/categories/inventory. Token access chỉ giữ trong memory; refresh dùng HttpOnly cookie cùng origin. `npm run format` định dạng mã nguồn; `npm run format:check` chỉ kiểm tra.
 
 E2E toàn hệ thống chạy từ root bằng `make test-e2e`; runner tự khởi chạy WAS test và Vite, dùng PostgreSQL/Redis thật với schema/key prefix riêng. Xem [hướng dẫn workspace](../README.md). Dockerfile của Viewer dùng context root để copy contract; Docker đang tạm hoãn kiểm chứng.
+
+Phase 03 thêm `/#/cart`, `/#/orders` và `/#/admin/orders`: COD/mock, retry/hủy/lifecycle/history. Intent chưa có kết quả được giữ trong sessionStorage theo user; không lưu access token. E2E cô lập từng spec bằng API/schema/Redis prefix riêng để giữ nguyên rate limit thật.

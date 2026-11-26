@@ -43,3 +43,13 @@ Phase 01 không có blocker thiết kế cho auth/catalog. Trước Phase 05 ph�
 - ADR-022: module catalog sở hữu product/category/images/assignment trong một transaction; inventory có nguồn quantity riêng. Product mới tạo stock0, mọi delta có audit/idempotency.
 - ADR-023: client dùng SessionRuntime external store, token memory, Web Locks + BroadcastChannel. Mỗi request chụp auth epoch; thay epoch thì không refresh/replay/clear hoặc publish response của intent cũ.
 - ADR-024: E2E tạo schema test riêng và prefix Redis riêng, sinh secret tạm, cleanup sau chạy; không dùng hoặc sửa dữ liệu demo development để vượt test.
+
+## Bổ sung Phase 03
+
+- ADR-025: quote SHA-256 canonical gồm cart ID/version, product ID/version/quantity/price và currency/shipping. Server tính lại từ DB; hash không cấp quyền hoặc thay việc xác minh giá. Thay metadata/version cũng cần xác nhận lại snapshot.
+- ADR-026: cart tối đa 100 món, quantity 1–1000, tổng và từng line tối đa 9×10¹² VND. Giỏ chỉ hiển thị live availability; chưa reservation. Quote vượt miền tiền vẫn cho xóa món để phục hồi.
+- ADR-027: idempotency result tồn tại trong PostgreSQL cùng transaction, chưa tự dọn trong Base. Operation tách admin transition và customer transition; fingerprint gồm resource ID. Không replay snapshot admin qua scope customer khi bị hạ quyền.
+- ADR-028: checkout khóa idempotency → user NO KEY UPDATE → cart → products theo ID → inventory theo ID. NO KEY UPDATE tương thích FK KEY SHARE từ idempotency insert; địa chỉ được snapshot khi user đang khóa. Cart mutation không lấy user lock sau cart. Lifecycle/payment khóa order trước payment/attempt/stock.
+- ADR-029: transaction retry tối đa 3 lần, chỉ SQLSTATE 40001/40P01; không gọi mạng trong transaction. Không retry lỗi nghiệp vụ/constraint thành đơn mới. Giá, trạng thái, stock vẫn được đọc và kiểm lại.
+- ADR-030: Mock chỉ development/test, tối đa 5 attempts/order, một Pending và một Paid/payment nhờ partial unique index. Khi flag tắt không mount route attempt/simulate; production không cho bật. Failed attempt bất biến, tạo attempt mới để retry.
+- ADR-031: Viewer giữ intent chưa biết kết quả trong sessionStorage theo user/operation; token vẫn chỉ ở memory. Chỉ bỏ key khi success hoặc business rejection xác định; giữ qua lỗi mạng, 5xx, auth/session/rate limit. E2E cô lập API/schema/Redis prefix theo spec, giữ nguyên policy auth thật.

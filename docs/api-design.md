@@ -1,6 +1,6 @@
 # Thiết kế API
 
-Nguồn chuẩn máy đọc: [openapi.yaml](../was/api/openapi.yaml). Đây là JSON hợp lệ trong cú pháp YAML để cả Go embed và tool frontend dùng trực tiếp. Contract toàn Base được chia `x-phase` và `x-implemented`; Phase 01–02 hiện thực foundation/auth/users/catalog/inventory; chỉ các endpoint phase sau chưa triển khai trả404.
+Nguồn chuẩn máy đọc: [openapi.yaml](../was/api/openapi.yaml). Đây là JSON hợp lệ trong cú pháp YAML để cả Go embed và tool frontend dùng trực tiếp. Contract toàn Base được chia `x-phase` và `x-implemented`; Phase 01–03 hiện thực foundation/auth/users/catalog/inventory/cart/orders/payments; chỉ các endpoint phase sau chưa triển khai trả404.
 
 ## Quy ước
 
@@ -42,3 +42,15 @@ Có36 operations đã hiện thực (4 Phase01 +32 Phase02), gồm GET admin/pro
 Password min12 Unicode characters/max72 UTF-8 bytes; email trim/lowercase, SKU trim/uppercase. Các cookie mutation yêu cầu trusted Origin; public đọc catalog không cần phiên. Hạn mức trả429 + Retry-After, Redis lỗi trả503. User role/status/session_version được đọc lại cho protected request.
 
 Page 1–100000, page_size1–100; sort users chỉ created_at/name/email, product chỉ created_at/name/price_asc/price_desc. q tối đa200 ký tự và %/_/backslash được tìm như ký tự literal. Hết hàng suy ra từ inventory; admin CRUD dùng soft-delete/archive, không mất stock history.
+
+## Hiện thực Phase 03
+
+Contract có 63 operations, 50 hiện thực khi bật mock local/test (4 nền tảng, 32 Phase 02, 14 Phase 03). Bổ sung GET admin/orders/{id}; các API cart/order/cancel/status/attempt/simulate đã chạy thật. Khi tắt mock, 2 route attempt/simulate không đăng ký và trả 404.
+
+Cart trả tên/SKU/image/version/giá/stock/availability cùng quote_hash, pricing_valid và mock_payments_enabled. POST item tăng quantity, PUT thay quantity tuyệt đối; DELETE item/clear trả 204. Chặn hơn 100 sản phẩm hoặc quantity ngoài 1–1000. Coupon không có trong CheckoutInput Phase 03; unknown field bị từ chối.
+
+Checkout gửi address_id/cart_version/quote_hash/payment_method, không gửi total. Server khóa cart/product/stock rồi tính lại. CART_CHANGED/QUOTE_CHANGED/PRODUCT_UNAVAILABLE trả409 và yêu cầu xem lại; cart/stock/order/payment/outbox/idempotency không thay đổi khi thất bại. Key hợp lệ 16–128 chữ/số/gạch nối/gạch dưới, namespace actor/operation và fingerprint chứa resource ID; status replay là201 cho checkout/attempt, 200 cho lifecycle/simulate.
+
+Order trả snapshot địa chỉ ba trường recipient/phone/address, item name/SKU/image/giá, tổng, history và payment kèm attempts. Customer chỉ xem/hủy đơn của mình; Admin có list/detail/status riêng. Operation admin transition tách khỏi customer cancel để không replay dữ liệu ngoài quyền sau khi role đổi.
+
+Mock attempt chỉ tạo khi order/payment Pending và chưa có attempt Pending/Paid; tối đa5lần. Simulate Success ghi Paid/Confirmed/payment.completed, Failure giữ aggregate/order Pending. Callback trễ hoặc attempt final với intent mới trả409; cùng key đã commit trả snapshot cũ. Không có callback payment gateway công khai trong Base.

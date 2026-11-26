@@ -47,3 +47,9 @@ Mỗi lifecycle transition có một mapping notification duy nhất. Order Conf
 Exchange topic durable `ecommerce.events`; queue `notifications.v1` nhận order/payment events; queue `catalog-invalidation.v1` nhận inventory/product/category changes. Retry/DLQ tách theo consumer, không dùng requeue nóng vô hạn. Chốt concurrency/prefetch/retry/retention bằng cấu hình và test trong Phase 05.
 
 Log theo event/correlation/aggregate ID. Metric outbox pending/age, confirm failure, retry/DLQ và consumer outcome, không dùng user/order/event ID làm metric label. Broker down chỉ giữ backlog outbox, không rollback order đã commit. Không purge outbox/queue để che lỗi.
+
+## Hiện thực tới Phase 03
+
+Đã tạo outbox_events và ghi order.created/confirmed/cancelled/status_changed, payment.completed và inventory.updated từ checkout/release cùng transaction nghiệp vụ. Cột id ánh xạ event_id khi relay tạo envelope. Payload không chứa địa chỉ đầy đủ hoặc credential; correlation_id nối với request, aggregate_version giữ thứ tự entity. Hiện chưa có publisher/consumer/RabbitMQ, published_at giữ NULL và backlog được giữ bền.
+
+Event từ product/category/admin adjustment và các cơ chế cache invalidation, relay/lease/confirms/processed_events/retry/DLQ sẽ được nối đầy đủ ở Phase 05; chưa báo hoàn thành các phần đó. Test lỗi ghi order.created chứng minh rollback cả order/payment/stock/history/idempotency và outbox trước đó trong transaction.

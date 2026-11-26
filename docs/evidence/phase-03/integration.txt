@@ -1,0 +1,149 @@
+make -C was GO="/snap/go/current/bin/go" test-integration
+make[1]: Entering directory '/home/dat.nguyen19/personal/E-com/was'
+GO="/snap/go/current/bin/go" bash scripts/test-integration.sh
+=== RUN   TestImplementedContractMatchesRouter
+--- PASS: TestImplementedContractMatchesRouter (0.48s)
+=== RUN   TestPhase02AdminCRUDValidationAndNormalization
+--- PASS: TestPhase02AdminCRUDValidationAndNormalization (2.57s)
+=== RUN   TestMigrationSeedAndRealHTTP
+--- PASS: TestMigrationSeedAndRealHTTP (0.07s)
+=== RUN   TestConstraintsAndSeedValidation
+--- PASS: TestConstraintsAndSeedValidation (0.05s)
+=== RUN   TestPhase02AuthRotationReuseAndRevocation
+--- PASS: TestPhase02AuthRotationReuseAndRevocation (1.52s)
+=== RUN   TestPhase02JWTValidationAndSessionState
+--- PASS: TestPhase02JWTValidationAndSessionState (0.69s)
+=== RUN   TestPhase02ConcurrentRefreshAndLastAdmin
+--- PASS: TestPhase02ConcurrentRefreshAndLastAdmin (0.70s)
+=== RUN   TestPhase02HTTPPermissionsCookiesAndOwnership
+--- PASS: TestPhase02HTTPPermissionsCookiesAndOwnership (0.93s)
+=== RUN   TestPhase02CatalogAtomicityVisibilityAndSearch
+--- PASS: TestPhase02CatalogAtomicityVisibilityAndSearch (0.50s)
+=== RUN   TestPhase02InventoryConcurrencyIdempotencyAndRollback
+--- PASS: TestPhase02InventoryConcurrencyIdempotencyAndRollback (0.52s)
+=== RUN   TestPhase02RedisLimitAndUnavailableAuth
+redis: 2026/11/26 10:32:05 pool.go:914: redis: connection pool: failed to dial after 5 attempts: dial tcp 127.0.0.1:1: connect: connection refused
+--- PASS: TestPhase02RedisLimitAndUnavailableAuth (1.70s)
+=== RUN   TestPhase02UpgradeAndRepeatSeed
+--- PASS: TestPhase02UpgradeAndRepeatSeed (1.53s)
+=== RUN   TestPhase03CheckoutSnapshotsReplayAndOwnership
+2026/11/26 10:32:07 INFO outbox event staged event_id=e17ead84-8b2c-41f7-827e-cbd7a4f7b17d event_type=inventory.updated aggregate_id=1e7d4c93-340b-4e42-938d-6fd7ae074753 request_id=checkout-test
+2026/11/26 10:32:07 INFO outbox event staged event_id=cef9d919-fd69-4f7d-84cb-62d330de6983 event_type=order.created aggregate_id=0ea0fe91-f72b-4b38-b64d-de799d26f35d request_id=checkout-test
+    phase03_test.go:124: SQL: orders=1, checkout_history=1, order.created=1, stock=4
+--- PASS: TestPhase03CheckoutSnapshotsReplayAndOwnership (0.50s)
+=== RUN   TestPhase03StockFiveTwentyBuyers
+2026/11/26 10:32:08 INFO outbox event staged event_id=9f2fe89f-2987-49b8-8aaf-86a45d9b1366 event_type=inventory.updated aggregate_id=d18e8e71-b19d-4d5e-afe6-74d314bfeea2 request_id=concurrent-buyers
+2026/11/26 10:32:08 INFO outbox event staged event_id=90a6f807-6363-4d15-b1b1-331cd20ae13a event_type=order.created aggregate_id=281f364e-a54f-4363-9eed-ea68030f8e74 request_id=concurrent-buyers
+2026/11/26 10:32:08 INFO outbox event staged event_id=f2e99b8b-db52-42b0-9fb7-d36efc6d3b55 event_type=inventory.updated aggregate_id=d18e8e71-b19d-4d5e-afe6-74d314bfeea2 request_id=concurrent-buyers
+2026/11/26 10:32:08 INFO outbox event staged event_id=4cb202af-a7f5-4552-9567-7cc5cea6d536 event_type=order.created aggregate_id=5b9a7f5b-2286-4ebf-95d4-e692c53554f1 request_id=concurrent-buyers
+2026/11/26 10:32:08 INFO outbox event staged event_id=a8738ba8-565f-4f98-845d-e2e0d9945d26 event_type=inventory.updated aggregate_id=d18e8e71-b19d-4d5e-afe6-74d314bfeea2 request_id=concurrent-buyers
+2026/11/26 10:32:08 INFO outbox event staged event_id=55f715d3-7ca7-4ef2-8874-d08626826e93 event_type=order.created aggregate_id=25586290-0527-49d1-9ec5-c009e08e7dd8 request_id=concurrent-buyers
+2026/11/26 10:32:08 INFO outbox event staged event_id=2dca0357-4a15-4fc7-a722-acbb991cfc28 event_type=inventory.updated aggregate_id=d18e8e71-b19d-4d5e-afe6-74d314bfeea2 request_id=concurrent-buyers
+2026/11/26 10:32:08 INFO outbox event staged event_id=febb2347-206f-4ebb-ba98-b0432f0f58bf event_type=order.created aggregate_id=27edcb97-22ca-4f1a-ba9d-836f4c46ba5b request_id=concurrent-buyers
+2026/11/26 10:32:08 INFO outbox event staged event_id=97759604-f54d-49b8-80e2-cef353ae4ec5 event_type=inventory.updated aggregate_id=d18e8e71-b19d-4d5e-afe6-74d314bfeea2 request_id=concurrent-buyers
+2026/11/26 10:32:08 INFO outbox event staged event_id=8e004405-e841-4c06-bf66-19e7bb9e660b event_type=order.created aggregate_id=e50acc4c-8ca7-4665-9cb4-49beddae6104 request_id=concurrent-buyers
+    phase03_test.go:166: SQL: 20 buyers, 5 orders, stock=0, checkout histories=5, order.created=5, inventory.updated=5
+--- PASS: TestPhase03StockFiveTwentyBuyers (0.39s)
+=== RUN   TestPhase03SameCartConcurrentKeysAndMutation
+2026/11/26 10:32:08 INFO outbox event staged event_id=3f826562-85cf-4bf6-b3ba-964416770b80 event_type=inventory.updated aggregate_id=5579aea1-6ea4-4e69-81f5-85901da941c8 request_id=same-key
+2026/11/26 10:32:08 INFO outbox event staged event_id=2c9c4a99-a5f8-4a86-90e0-a9c155aefe30 event_type=order.created aggregate_id=c0404765-c640-4afc-9110-99cc70649794 request_id=same-key
+2026/11/26 10:32:08 INFO outbox event staged event_id=a3b7787b-c718-4f77-9b9e-29d4156ea782 event_type=inventory.updated aggregate_id=5579aea1-6ea4-4e69-81f5-85901da941c8 request_id=""
+2026/11/26 10:32:08 INFO outbox event staged event_id=60169367-0d25-4474-928d-2f21b56fd355 event_type=order.created aggregate_id=91cf7d76-a0f1-4905-8cb0-de82ab0ffd6c request_id=""
+--- PASS: TestPhase03SameCartConcurrentKeysAndMutation (0.32s)
+=== RUN   TestPhase03QuoteValidationRollbackAndCartBoundaries
+2026/11/26 10:32:08 INFO outbox event staged event_id=91eb6bb4-617f-4f91-9b65-b72bbbca3e94 event_type=inventory.updated aggregate_id=8223e879-9f23-4f2b-ad00-2c48163fd8d3 request_id=""
+2026/11/26 10:32:08 INFO outbox event staged event_id=3bdbf8e3-be2a-4ca2-9bb2-60b82fca7ef4 event_type=inventory.updated aggregate_id=ed9cd9f7-6cc8-423a-bf6f-1a2fd3fd28e3 request_id=""
+--- PASS: TestPhase03QuoteValidationRollbackAndCartBoundaries (0.30s)
+=== RUN   TestPhase03CODLifecycleCancelAndFailed
+2026/11/26 10:32:09 INFO outbox event staged event_id=dd5ed300-c579-40cd-a810-76dea6c495e8 event_type=inventory.updated aggregate_id=be3924c7-696a-4e03-8264-152b92ce85b4 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=4de9deb8-3b5e-4f60-9af5-327855cf80c6 event_type=order.created aggregate_id=c256eb7b-04eb-4582-99c0-8dbefc425830 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=4209d0bc-0e1b-4f2b-85d0-93447948d4f8 event_type=order.confirmed aggregate_id=c256eb7b-04eb-4582-99c0-8dbefc425830 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=3540a84c-78a4-48f6-b564-372b768f91dd event_type=order.status_changed aggregate_id=c256eb7b-04eb-4582-99c0-8dbefc425830 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=f593dccd-89c1-4e82-8c41-2470437845fe event_type=order.status_changed aggregate_id=c256eb7b-04eb-4582-99c0-8dbefc425830 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=9b8fec30-5c98-4028-b2f4-68429fd1384f event_type=payment.completed aggregate_id=13bf4198-c337-448e-ad2a-ed3e25ade63d request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=0a94d8b7-52fd-44b4-a288-ee55f62b4858 event_type=order.status_changed aggregate_id=c256eb7b-04eb-4582-99c0-8dbefc425830 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=9051de80-a54f-4057-aa34-1fd8d831e127 event_type=inventory.updated aggregate_id=be3924c7-696a-4e03-8264-152b92ce85b4 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=99b53dd0-bce6-43cc-abb7-a742916d8e74 event_type=order.created aggregate_id=e059c99a-1b55-48e0-850e-1447a7e47d11 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=f6243916-8cfc-4b10-b962-aaa1d8a2a607 event_type=inventory.updated aggregate_id=be3924c7-696a-4e03-8264-152b92ce85b4 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=9ca58a46-b61b-4322-9543-0e7263ed909b event_type=order.cancelled aggregate_id=e059c99a-1b55-48e0-850e-1447a7e47d11 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=a22e1cc8-fd94-4fcc-896a-601f67d104be event_type=inventory.updated aggregate_id=be3924c7-696a-4e03-8264-152b92ce85b4 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=bd86557e-7413-4c4c-9f6e-900301bbdc17 event_type=order.created aggregate_id=df2ad6c5-d379-4692-bdb2-721d0c8c7730 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=0de7aa4e-b33f-421b-9c50-2f40c85f1b89 event_type=inventory.updated aggregate_id=be3924c7-696a-4e03-8264-152b92ce85b4 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=0b239d0c-bc61-4f86-8d4c-1a7c67991a5e event_type=order.status_changed aggregate_id=df2ad6c5-d379-4692-bdb2-721d0c8c7730 request_id=""
+--- PASS: TestPhase03CODLifecycleCancelAndFailed (0.30s)
+=== RUN   TestPhase03MockRetryReplayAndCancelRace
+2026/11/26 10:32:09 INFO outbox event staged event_id=eca36f68-7ed5-450c-b1e5-959a7fec1e8e event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=e98cc1cf-af2f-49fd-89df-731a4b7bf38d event_type=order.created aggregate_id=577f270b-3e99-455e-8491-45f38eea4378 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=c83d8598-949d-451f-b62b-8f0ade00b084 event_type=order.confirmed aggregate_id=577f270b-3e99-455e-8491-45f38eea4378 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=a4399724-fdbc-4767-98e6-2f828e06c920 event_type=payment.completed aggregate_id=5b46858d-28b5-441a-bf30-b7848f65fdc5 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=9a8b670b-dbef-4be0-9493-07d80f3b12a6 event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=d95d0b92-f860-42f0-a798-25de6eb9d340 event_type=order.created aggregate_id=053ebd4c-7027-49f5-a506-88a9a0da6cf5 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=83639e0e-e00c-4836-890b-63ec4bd6b55b event_type=order.confirmed aggregate_id=053ebd4c-7027-49f5-a506-88a9a0da6cf5 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=e5c49104-82d9-40d5-86cd-e53c0dfd2f78 event_type=payment.completed aggregate_id=e237cc08-a8ae-4324-9d48-4a2d3a2625ee request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=3d134a82-7995-4ca3-8758-59c76e389fad event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=cc7b98ac-2391-4b17-9d58-ceacc6ee48e3 event_type=order.created aggregate_id=89cdd880-b69a-4b62-9296-00c5a5d11d63 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=0b54332d-5717-4798-9c34-973d1348b11d event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=e6eb59ea-17c5-4fb6-96b1-f93e7505b321 event_type=order.cancelled aggregate_id=89cdd880-b69a-4b62-9296-00c5a5d11d63 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=87f577a4-db00-49bd-847b-20cd0a11040c event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=76daf10a-5360-4272-8bc3-eac952863571 event_type=order.created aggregate_id=d4d9f9f3-aa45-447f-a72c-eb95baadae7b request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=1fb94107-5874-452d-b746-55dd420be056 event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=0bce200a-bd3a-4ce6-98c6-e9789e93058e event_type=order.cancelled aggregate_id=d4d9f9f3-aa45-447f-a72c-eb95baadae7b request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=2f279b6f-ca7b-4c41-a4a7-d4007ffd5ede event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=8c8e62b7-4131-45cd-89c4-a7b777ae11dd event_type=order.created aggregate_id=7402e6d7-f40c-4b90-8ee7-ea3bcfa17209 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=ea4433c0-a070-4667-8e69-4746ac11a772 event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=9ba55504-c0c4-4cdc-a2e2-ca413a982134 event_type=order.cancelled aggregate_id=7402e6d7-f40c-4b90-8ee7-ea3bcfa17209 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=3c4a17a4-f5d1-44a1-b031-ab9da77d9618 event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=4d98b629-6940-403f-9787-b1e3826b8e1d event_type=order.created aggregate_id=716e66f3-e9e3-45d3-a6de-2124ab08371a request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=a0238955-ae89-4617-a624-da155012dfd2 event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=600635e6-23b4-4d19-8ce5-6c3b9b7df6e1 event_type=order.cancelled aggregate_id=716e66f3-e9e3-45d3-a6de-2124ab08371a request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=8ac9d34d-9baa-4aea-8317-39d78d08d149 event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=a387a270-47b2-46c3-afb1-1e923c1ad713 event_type=order.created aggregate_id=360b21f1-8e9e-40b3-9d5c-dd7ee741b955 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=246d449a-9012-4562-ad33-da580769d47b event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=fc9c5ffb-c216-4d8d-91ef-6c47103f3478 event_type=order.cancelled aggregate_id=360b21f1-8e9e-40b3-9d5c-dd7ee741b955 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=f77b8002-d173-4202-96c2-bff6d1a05cb3 event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=a7d996b1-8a52-4c84-bc59-1d572ea183c2 event_type=order.created aggregate_id=4bc232d9-b3e9-432a-bca1-50ed62acc57a request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=3d2fc250-5d51-456e-8904-8ec9d5d8c24f event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=9887e7ec-dd21-43d6-b3aa-78739a6a401b event_type=order.cancelled aggregate_id=4bc232d9-b3e9-432a-bca1-50ed62acc57a request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=24665fe5-6f1a-4a3e-976d-272c4c36bd1f event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=57329a86-c178-4a7d-9737-e2e9b401393a event_type=order.created aggregate_id=1214ef7c-8e7c-4861-b2a0-2104fa4d53d3 request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=b5056754-f378-4e82-a3db-1a1f485b6c49 event_type=inventory.updated aggregate_id=77e2f405-fc60-46ca-ba2e-ca4ed684c40e request_id=""
+2026/11/26 10:32:09 INFO outbox event staged event_id=be6e82c6-c3f9-4258-890d-6b98cf1482e6 event_type=order.cancelled aggregate_id=1214ef7c-8e7c-4861-b2a0-2104fa4d53d3 request_id=""
+--- PASS: TestPhase03MockRetryReplayAndCancelRace (0.36s)
+=== RUN   TestPhase03HTTPStrictContractAndMockDisabled
+2026/11/26 10:32:09 INFO outbox event staged event_id=8b31ce25-8aac-4563-b5bc-1be56745194d event_type=inventory.updated aggregate_id=7fc015bd-0c9d-45e2-80d1-052c887fc676 request_id=88622292b4517b737b0125355f9acab3
+2026/11/26 10:32:09 INFO outbox event staged event_id=c6b9afb0-0fa5-4bbb-baae-d59d5a10cf9a event_type=order.created aggregate_id=23d2e663-b946-41cb-8385-16b6e439165f request_id=88622292b4517b737b0125355f9acab3
+--- PASS: TestPhase03HTTPStrictContractAndMockDisabled (0.50s)
+=== RUN   TestPhase03FirstCartAndAdminAdjustmentRace
+--- PASS: TestPhase03FirstCartAndAdminAdjustmentRace (0.30s)
+=== RUN   TestPhase03IntentNamespacesShippingAndRetryLimit
+2026/11/26 10:32:10 INFO outbox event staged event_id=da8ab728-d78a-40b0-bf27-3b1da1e3e12e event_type=inventory.updated aggregate_id=723644fc-dfd8-4fe9-b3b3-e6b8998abe78 request_id=""
+2026/11/26 10:32:10 INFO outbox event staged event_id=d9092104-089c-4399-b58f-70210a24eab3 event_type=order.created aggregate_id=c0105a4d-c22b-4c56-bb65-595b0a7a8051 request_id=""
+2026/11/26 10:32:10 INFO outbox event staged event_id=142bf082-d9b6-4222-8e18-48117b90a4c7 event_type=inventory.updated aggregate_id=723644fc-dfd8-4fe9-b3b3-e6b8998abe78 request_id=""
+2026/11/26 10:32:10 INFO outbox event staged event_id=8bfd363f-a99d-4b1c-927c-ceee310f580f event_type=order.created aggregate_id=a65e1601-f9b1-4a7b-9a2c-7807bee65901 request_id=""
+2026/11/26 10:32:10 INFO outbox event staged event_id=aa7acaa1-14d3-4fec-ab53-0ea9f44c44f0 event_type=inventory.updated aggregate_id=723644fc-dfd8-4fe9-b3b3-e6b8998abe78 request_id=""
+2026/11/26 10:32:10 INFO outbox event staged event_id=f5885783-1c4e-4969-a8c0-00e3f71e01da event_type=order.cancelled aggregate_id=c0105a4d-c22b-4c56-bb65-595b0a7a8051 request_id=""
+2026/11/26 10:32:10 INFO outbox event staged event_id=b79fae2d-d79d-4a8c-9faa-96fe952583cf event_type=inventory.updated aggregate_id=723644fc-dfd8-4fe9-b3b3-e6b8998abe78 request_id=""
+2026/11/26 10:32:10 INFO outbox event staged event_id=cd12abeb-fd5e-4989-bb32-888953612b5f event_type=order.created aggregate_id=0f84b2c4-bfb4-4e37-a1a7-f67d21a6e6b1 request_id=""
+2026/11/26 10:32:10 INFO outbox event staged event_id=27993800-c52b-4832-9bc8-640c6adcfbf9 event_type=inventory.updated aggregate_id=723644fc-dfd8-4fe9-b3b3-e6b8998abe78 request_id=""
+2026/11/26 10:32:10 INFO outbox event staged event_id=f4e7c2c5-7018-4085-91f4-e79e2fb39679 event_type=order.cancelled aggregate_id=0f84b2c4-bfb4-4e37-a1a7-f67d21a6e6b1 request_id=""
+--- PASS: TestPhase03IntentNamespacesShippingAndRetryLimit (0.31s)
+=== RUN   TestPhase03ReplayDoesNotSurvivePrivilegeScopeChange
+2026/11/26 10:32:10 INFO outbox event staged event_id=2859d781-e41d-4912-b384-afc802bf7e8e event_type=inventory.updated aggregate_id=d2b48da5-e2d1-49c8-8569-049433e7cd52 request_id=""
+2026/11/26 10:32:10 INFO outbox event staged event_id=c47a28ad-109d-4977-aa34-6e82f93107b1 event_type=order.created aggregate_id=ab24d4b5-5854-495f-a69f-722d56b0bdc1 request_id=""
+2026/11/26 10:32:11 INFO outbox event staged event_id=51b7690e-37bb-4cc0-a84a-3f8fb50769e6 event_type=inventory.updated aggregate_id=d2b48da5-e2d1-49c8-8569-049433e7cd52 request_id=774c6d82a0e961d9c75e7d7f5f25a64b
+2026/11/26 10:32:11 INFO outbox event staged event_id=532c6fe5-5055-4177-bef7-21d5cf22dafe event_type=order.cancelled aggregate_id=ab24d4b5-5854-495f-a69f-722d56b0bdc1 request_id=774c6d82a0e961d9c75e7d7f5f25a64b
+--- PASS: TestPhase03ReplayDoesNotSurvivePrivilegeScopeChange (0.97s)
+=== RUN   TestPhase03ConcurrentPaymentSuccessAndOutboxPrivacy
+2026/11/26 10:32:11 INFO outbox event staged event_id=ef8022b4-c487-45a7-aa40-589efb1335b8 event_type=inventory.updated aggregate_id=c939f145-0e4d-4a0e-bd6b-7bad331029a8 request_id=payment-concurrency
+2026/11/26 10:32:11 INFO outbox event staged event_id=32f5c6c4-0c52-4263-af25-945f62a9ea6c event_type=order.created aggregate_id=1dd51bf5-7177-4ad9-8514-55d8f0aaf300 request_id=payment-concurrency
+2026/11/26 10:32:11 INFO outbox event staged event_id=b458f7db-7d37-4d40-a2a5-31425386a2cb event_type=order.confirmed aggregate_id=1dd51bf5-7177-4ad9-8514-55d8f0aaf300 request_id=payment-concurrency
+2026/11/26 10:32:11 INFO outbox event staged event_id=4ce666ba-7746-470d-a264-fa7e22088cb5 event_type=payment.completed aggregate_id=de800d30-250a-4dd7-a3c3-fe58c7ec5915 request_id=payment-concurrency
+    phase03_test.go:650: SQL: 12 concurrent success requests, Paid attempts=1, payment.completed=1, stock deductions=1
+--- PASS: TestPhase03ConcurrentPaymentSuccessAndOutboxPrivacy (0.39s)
+=== RUN   TestPhase03UpgradeFromTwoAndIsolatedRollback
+2026/11/26 10:32:12 INFO outbox event staged event_id=9fc42f65-f68c-465a-a182-c35d6c820fd9 event_type=inventory.updated aggregate_id=bc1ff446-a7ee-4de8-a379-41fec08658dd request_id=""
+2026/11/26 10:32:12 INFO outbox event staged event_id=871abccb-fc92-4bef-8fa9-e20ea1e26b95 event_type=order.created aggregate_id=980de8ff-dcd0-42d4-a8b7-87da9755c3a2 request_id=""
+--- PASS: TestPhase03UpgradeFromTwoAndIsolatedRollback (0.12s)
+PASS
+ok  	ecommerce.local/base/tests/integration	16.033s
+make[1]: Leaving directory '/home/dat.nguyen19/personal/E-com/was'

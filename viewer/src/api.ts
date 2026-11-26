@@ -23,6 +23,16 @@ const messages: Record<string, string> = {
   IDEMPOTENCY_CONFLICT: 'Yêu cầu đã được gửi với nội dung khác. Hãy kiểm tra lại tồn kho.',
   INSUFFICIENT_STOCK: 'Điều chỉnh này sẽ làm tồn kho âm.',
   STOCK_LIMIT: 'Số lượng vượt giới hạn cho phép.',
+  PENDING_INTENT: 'Cần kiểm tra kết quả yêu cầu trước trước khi tạo thao tác mới.',
+  CART_CHANGED: 'Giỏ hàng đã thay đổi. Vui lòng kiểm tra và xác nhận lại.',
+  CART_EMPTY: 'Giỏ hàng đang trống hoặc đã được đặt hàng.',
+  QUOTE_CHANGED: 'Giá hoặc phí giao hàng đã thay đổi. Vui lòng kiểm tra và xác nhận lại.',
+  PRODUCT_UNAVAILABLE:
+    'Một sản phẩm đã ngừng bán hoặc không đủ tồn kho. Vui lòng kiểm tra giỏ hàng.',
+  INVALID_TRANSITION: 'Trạng thái đơn hàng đã thay đổi hoặc không cho phép thao tác này.',
+  ATTEMPT_PENDING: 'Hãy hoàn tất lần thanh toán đang chờ trước khi tạo lần mới.',
+  PAYMENT_RETRY_LIMIT:
+    'Đã đạt giới hạn 5 lần thanh toán mô phỏng. Bạn có thể hủy đơn chưa thanh toán.',
   SESSION_CHANGED:
     'Phiên đăng nhập đã thay đổi. Vui lòng kiểm tra lại thông tin rồi thực hiện lại thao tác.',
   ORIGIN_REQUIRED: 'Nguồn đăng nhập không hợp lệ. Hãy mở ứng dụng từ địa chỉ được cấu hình.',

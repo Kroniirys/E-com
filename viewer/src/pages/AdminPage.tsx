@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import OrdersPage from './OrdersPage'
 import type { FormEvent } from 'react'
 import { errorMessage, money } from '../api'
 import type { Category, Movement, Page, Product, ProductInput, Stock, User } from '../api'
@@ -11,6 +12,7 @@ const tabs = [
   { key: 'categories', title: 'Danh mục' },
   { key: 'inventory', title: 'Tồn kho' },
   { key: 'users', title: 'Người dùng' },
+  { key: 'orders', title: 'Đơn hàng' },
 ]
 export default function AdminPage({ tab }: { tab: string }) {
   return (
@@ -27,14 +29,19 @@ export default function AdminPage({ tab }: { tab: string }) {
           <a
             href={`#/admin/${item.key}`}
             key={item.key}
-            aria-current={tab === item.key ? 'page' : undefined}
+            aria-current={tab.split('/')[0] === item.key ? 'page' : undefined}
             className={`shrink-0 rounded-lg px-5 py-3 text-sm ${tab === item.key ? 'bg-[#183c32] text-white' : 'hover:bg-stone-100'}`}
           >
             {item.title}
           </a>
         ))}
       </nav>
-      {tab === 'products' ? (
+      {tab === 'orders' || tab.startsWith('orders/') ? (
+        <OrdersPage
+          admin
+          id={tab.startsWith('orders/') ? tab.slice('orders/'.length) : undefined}
+        />
+      ) : tab === 'products' ? (
         <Products />
       ) : tab === 'categories' ? (
         <Categories />

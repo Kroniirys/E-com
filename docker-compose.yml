@@ -1,15 +1,16 @@
 name: ecommerce-base
 
 x-backend: &backend
-  image: ecommerce-base-api:phase02
+  image: ecommerce-base-api:phase03
   build:
     context: ./was
     dockerfile: Dockerfile
   environment: &app-environment
     APP_ENV: development
     HTTP_ADDR: :8080
-    APP_VERSION: phase02
+    APP_VERSION: phase03
     GIN_MODE: release
+    MOCK_PAYMENTS_ENABLED: ${MOCK_PAYMENTS_ENABLED:-true}
     AUTH_JWT_SECRET: ${AUTH_JWT_SECRET:?Generate AUTH_JWT_SECRET in .env}
     REDIS_URL: redis://redis:6379/0
     RATE_LIMIT_PREFIX: ${RATE_LIMIT_PREFIX:-ecommerce:rate:}

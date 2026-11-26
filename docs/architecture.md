@@ -60,4 +60,14 @@ JWT HS256 chứa session ID/version, được đối chiếu user/session trong 
 
 Viewer có catalog/detail, đăng ký/đăng nhập, tài khoản/địa chỉ/password và admin users/products/categories/inventory. `SessionRuntime` quản lý access token trong memory; Web Locks serialize cookie mutation giữa tab, BroadcastChannel đồng bộ đổi phiên. Auth epoch ngăn request cũ replay hoặc phát dữ liệu sang tài khoản vừa đăng nhập. `Field` dùng label liên kết ID rõ ràng; loading/error/empty/validation được dùng chung trong `ui.tsx`.
 
-Integration tạo schema PostgreSQL và prefix Redis riêng; E2E runner sinh secret tạm và schema riêng qua `cmd/testscope`. Cleanup chỉ tài nguyên thuộc lần chạy. Worker vẫn chưa consume sự kiện; cart/order/payment/cache catalog thuộc các phase sau.
+Integration tạo schema PostgreSQL và prefix Redis riêng; E2E runner sinh secret tạm và schema riêng qua `cmd/testscope`. Cleanup chỉ tài nguyên thuộc lần chạy. Worker vẫn chưa consume sự kiện; cache catalog và publisher/consumer thuộc các phase sau.
+
+## Phase 03 đã hiện thực
+
+`modules/cart` sở hữu carts/items và live quote; `modules/orders` điều phối transaction checkout/lifecycle cùng `modules/payments` (aggregate/attempt) và `inventory.Change`. `platform/money` chặn tiền vượt miền, `platform/idempotency` claim/result/retry, `platform/outbox` ghi sự kiện bền. Không gọi broker hoặc gateway trong transaction.
+
+Checkout dùng user NO KEY UPDATE → cart → product và stock theo ID sau khi claim idempotency. Lifecycle/payment khóa order trước payment/attempt/stock. Read detail/list dùng snapshot RepeatableRead để tránh ghép status/payment từ hai thời điểm. Service và DB partial unique cùng bảo vệ Pending/Paid attempt; admin/customer transition tách namespace replay.
+
+Viewer thêm cart/checkout/orders/admin orders và intent recovery trong sessionStorage theo user. Không persist token; request vẫn chịu auth epoch guard. Khi response không rõ kết quả, giữ key để kiểm tra lại cả sau reload. Khi quote thay đổi, tải lại và yêu cầu xác nhận mới.
+
+HTTP log có request/order/attempt/error code. Outbox log ghi event ID và correlation ở mức staged, không khẳng định transaction đã commit hoặc event đã publish. Nguồn chuẩn về event đã commit là outbox trong PostgreSQL; publisher và metrics thuộc Phase 05.
