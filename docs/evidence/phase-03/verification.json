@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-26",
+  "go_unit_race_tests": 13,
+  "go_vet": "PASS",
+  "integration_passed": 24,
+  "viewer_unit_tests": 13,
+  "e2e_spec_passed": 3,
+  "restart": {
+    "forced_api_restart": "PASS",
+    "exact_response_replay": "PASS",
+    "order_count": 1,
+    "stock_deductions": 1,
+    "cart_empty": true,
+    "order_id": "402d45eb-00ba-41a5-a363-a093be3931f9"
+  },
+  "broken_local_links": [],
+  "docker": "DEFERRED_BY_USER",
+  "branch": "feat/phase-03-cart-orders-payments"
+}

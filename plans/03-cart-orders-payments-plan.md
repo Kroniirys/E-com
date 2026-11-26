@@ -3,10 +3,10 @@ title: "Phase 03 — Giỏ hàng, đơn hàng và thanh toán"
 artifact: implementation-plan
 role: fullstack
 status: draft
-version: 0.2
-owner: "TBD"
+version: 0.3
+owner: "datnguyen <dat01687241584@gmail.com>"
 approvers: []
-last_updated: 2026-11-25
+last_updated: 2026-11-26
 ---
 
 # Phase 03 — Giỏ hàng, đơn hàng và thanh toán
@@ -97,18 +97,28 @@ Log request/order/attempt/event ID, không log token/address đầy đủ. Ghi l
 
 ## 5. Tiêu chí hoàn thành
 
-- [ ] Customer tạo và xem order từ UI bằng COD hoặc mock; admin xử lý đúng lifecycle.
-- [ ] Giá/address/shipping là snapshot; server quyết định tổng tiền.
-- [ ] Không overselling, stock âm, order/payment/hoàn kho trùng trong test concurrency.
-- [ ] Retry/payment failure/cancel và callback trễ có kết quả rõ, đúng state machine.
-- [ ] Mutation và outbox/idempotency commit cùng transaction; dữ liệu tồn tại sau restart.
-- [ ] Unit/integration/concurrency/E2E và docs có evidence thật.
+- [x] Customer tạo và xem order từ UI bằng COD hoặc mock; admin xử lý đúng lifecycle.
+- [x] Giá/address/shipping là snapshot; server quyết định tổng tiền.
+- [x] Không overselling, stock âm, order/payment/hoàn kho trùng trong test concurrency.
+- [x] Retry/payment failure/cancel và callback trễ có kết quả rõ, đúng state machine.
+- [x] Mutation và outbox/idempotency commit cùng transaction; dữ liệu tồn tại sau restart.
+- [x] Unit/integration/concurrency/E2E và docs có evidence thật.
 
 ## 6. Checklist review
 
-- [ ] Khóa, transaction boundary, retry và idempotency được kiểm tra cả failure path.
-- [ ] Payment aggregate/attempt/order không bị gộp trạng thái sai.
-- [ ] Mọi mutation quyền và ownership kiểm tra phía server.
-- [ ] Không đánh dấu coupon/notification đã hoàn thiện trước phase sở hữu.
+- [x] Khóa, transaction boundary, retry và idempotency được kiểm tra cả failure path.
+- [x] Payment aggregate/attempt/order không bị gộp trạng thái sai.
+- [x] Mọi mutation quyền và ownership kiểm tra phía server.
+- [x] Không đánh dấu coupon/notification đã hoàn thiện trước phase sở hữu.
 
 Tiếp theo: [Phase 04](04-coupons-reviews-admin-plan.md).
+
+## Implementation Result
+
+### Lần 1 (2026-11-26)
+
+Đã thực hiện P03-01–06: schema v3, cart/quote, checkout/snapshot, COD/mock/attempts, lifecycle/history/cancel, outbox và UI customer/admin. Modules ở `was/internal/modules/{cart,orders,payments}`, money/idempotency/outbox tại platform; giao dịch inventory dùng Change trong transaction chung. Không có coupon hoặc publisher/notification giả.
+
+Đạt 13 Go unit tests dưới race detector và vet, 24 integration tests trên PostgreSQL/Redis thật, 13 Viewer unit/component tests, OpenAPI/lint/typecheck/build/format và 3 browser E2E. Kiểm chứng kill/restart API giữ nguyên response checkout và chỉ một lần trừ stock. Review độc lập phát hiện và đã sửa GORM cart lookup, replay vượt scope quyền, intent mất key qua429 và metadata201. [Progress/evidence](../docs/PROGRESS.md), [review](../docs/review-phase-03.md), [checklist thực thi](../docs/phase-03-execution.md).
+
+Status tài liệu giữ draft, checkbox ghi kết quả thực thi, không tự phê duyệt artifact. Docker tiếp tục tạm hoãn; Phase 04 chưa bắt đầu. Các giá trị TTL/timeout/retry trong mã là chính sách kỹ thuật, không phải ước lượng lịch triển khai.
