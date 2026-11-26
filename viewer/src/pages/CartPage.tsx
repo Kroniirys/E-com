@@ -44,9 +44,13 @@ export default function CartPage() {
       setError(errorMessage(e))
       if (
         e instanceof ApiError &&
-        ['QUOTE_CHANGED', 'CART_CHANGED', 'PRODUCT_UNAVAILABLE', 'INSUFFICIENT_STOCK'].includes(
-          e.code,
-        )
+        [
+          'QUOTE_CHANGED',
+          'CART_CHANGED',
+          'PRODUCT_UNAVAILABLE',
+          'INSUFFICIENT_STOCK',
+          'COUPON_UNAVAILABLE',
+        ].includes(e.code)
       )
         state.reload()
     } finally {
@@ -169,6 +173,7 @@ export default function CartPage() {
                   cart={state.data}
                   busy={busy || !!pending}
                   checkout={checkout}
+                  reload={state.reload}
                 />
               </>
             )}
@@ -179,10 +184,12 @@ export default function CartPage() {
   )
 }
 function Checkout({
+  reload,
   cart,
   busy,
   checkout,
 }: {
+  reload: () => void
   cart: Cart
   busy: boolean
   checkout: (body: unknown) => Promise<void>
@@ -191,6 +198,34 @@ function Checkout({
   const [address, setAddress] = useState('')
   const [method, setMethod] = useState('COD')
   const [confirmed, setConfirmed] = useState(false)
+  const { api } = useSession()
+  const [code, setCode] = useState('')
+  const [promo, setPromo] = useState<components['schemas']['CouponPreview'] | null>(null)
+  const [promoError, setPromoError] = useState('')
+  const [applying, setApplying] = useState(false)
+  const apply = async () => {
+    setApplying(true)
+    setPromoError('')
+    setConfirmed(false)
+    try {
+      const value = await api.request<components['schemas']['CouponPreview']>(
+        'POST',
+        '/api/v1/coupons/validate',
+        { code, cart_version: cart.version },
+      )
+      if (value.cart_quote_hash !== cart.quote_hash) {
+        reload()
+        return
+      }
+      setPromo(value)
+    } catch (e) {
+      setPromo(null)
+      setPromoError(errorMessage(e))
+    } finally {
+      setApplying(false)
+    }
+  }
+
   const selected =
     address ||
     addresses.data?.items.find((a) => a.is_default)?.id ||
@@ -241,6 +276,47 @@ function Checkout({
             )}
           </select>
         </Field>
+        <div className="space-y-3">
+          <Field label="Mã giảm giá">
+            <input
+              className="input"
+              value={code}
+              maxLength={64}
+              disabled={busy || applying}
+              onChange={(e) => {
+                setCode(e.target.value)
+                setPromo(null)
+                setConfirmed(false)
+              }}
+            />
+          </Field>
+          <div className="flex gap-3">
+            <button
+              className="button-secondary"
+              type="button"
+              disabled={busy || applying || !code.trim()}
+              onClick={() => void apply()}
+            >
+              Áp dụng coupon
+            </button>
+            {promo && (
+              <button
+                className="button-secondary"
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setPromo(null)
+                  setCode('')
+                  setConfirmed(false)
+                }}
+              >
+                Bỏ coupon
+              </button>
+            )}
+          </div>
+          {promo && <p role="status">Đã áp dụng {promo.code}</p>}
+          {promoError && <Failure message={promoError} />}
+        </div>
         <p className="text-sm text-stone-500">
           COD được ghi nhận đã thanh toán khi đơn được giao thành công.
         </p>
@@ -255,9 +331,15 @@ function Checkout({
             <dt>Phí giao hàng</dt>
             <dd>{money(cart.shipping_minor)}</dd>
           </div>
+          {promo && (
+            <div className="flex justify-between">
+              <dt>Giảm giá</dt>
+              <dd>-{money(promo.discount_minor)}</dd>
+            </div>
+          )}
           <div className="flex justify-between border-t pt-3 text-xl font-semibold">
             <dt>Tổng thanh toán</dt>
-            <dd>{money(cart.total_minor)}</dd>
+            <dd>{money(promo?.total_minor ?? cart.total_minor)}</dd>
           </div>
         </dl>
         {!cart.pricing_valid && (
@@ -276,6 +358,7 @@ function Checkout({
           className="button-primary w-full"
           disabled={
             busy ||
+            applying ||
             !confirmed ||
             !selected ||
             !cart.pricing_valid ||
@@ -285,7 +368,8 @@ function Checkout({
             void checkout({
               address_id: selected,
               cart_version: cart.version,
-              quote_hash: cart.quote_hash,
+              quote_hash: promo?.quote_hash ?? cart.quote_hash,
+              ...(promo ? { coupon_code: promo.code } : {}),
               payment_method: method,
             })
           }

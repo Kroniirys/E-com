@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import ProductReviews from './ProductReviews'
 import { money, errorMessage } from '../api'
 import { useSession } from '../session'
 import type { Product } from '../api'
@@ -142,6 +143,7 @@ export default function ProductPage({ id }: { id: string }) {
           </div>
         </section>
       </div>
+      <ProductReviews id={id} />
     </main>
   )
 }

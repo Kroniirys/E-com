@@ -166,7 +166,7 @@ function Workspace() {
       )}
       {content}
       <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-[#dae1d4] px-6 py-7 text-xs text-[#68796f] lg:px-10">
-        <span>E-commerce Base · Phase 03</span>
+        <span>E-commerce Base · Phase 04</span>
         <a className="underline" href="/api-docs/index.html">
           Tài liệu API ↗
         </a>

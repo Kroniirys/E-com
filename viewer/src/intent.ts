@@ -51,6 +51,8 @@ export async function performIntent<T>(
       [
         'INVALID_INPUT',
         'QUOTE_CHANGED',
+        'COUPON_UNAVAILABLE',
+        'COUPON_LIMIT_CONFLICT',
         'CART_CHANGED',
         'CART_EMPTY',
         'PRODUCT_UNAVAILABLE',

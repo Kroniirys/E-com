@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import OrdersPage from './OrdersPage'
+import EngagementAdmin from './EngagementAdmin'
 import type { FormEvent } from 'react'
 import { errorMessage, money } from '../api'
 import type { Category, Movement, Page, Product, ProductInput, Stock, User } from '../api'
@@ -13,6 +14,9 @@ const tabs = [
   { key: 'inventory', title: 'Tồn kho' },
   { key: 'users', title: 'Người dùng' },
   { key: 'orders', title: 'Đơn hàng' },
+  { key: 'coupons', title: 'Coupon' },
+  { key: 'reviews', title: 'Đánh giá' },
+  { key: 'dashboard', title: 'Tổng quan' },
 ]
 export default function AdminPage({ tab }: { tab: string }) {
   return (
@@ -36,7 +40,9 @@ export default function AdminPage({ tab }: { tab: string }) {
           </a>
         ))}
       </nav>
-      {tab === 'orders' || tab.startsWith('orders/') ? (
+      {['coupons', 'reviews', 'dashboard'].includes(tab) ? (
+        <EngagementAdmin key={tab} tab={tab} />
+      ) : tab === 'orders' || tab.startsWith('orders/') ? (
         <OrdersPage
           admin
           id={tab.startsWith('orders/') ? tab.slice('orders/'.length) : undefined}

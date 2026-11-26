@@ -141,6 +141,11 @@ function OrderDetail({ id, admin }: { id: string; admin: boolean }) {
               <p className="mt-2">{money(item.line_total_minor)}</p>
             </div>
           ))}
+          {o.coupon_snapshot && (
+            <p>
+              Coupon {o.coupon_snapshot.code}: -{money(o.discount_minor)}
+            </p>
+          )}
           <p>Phí giao hàng: {money(o.shipping_minor)}</p>
           <p className="text-xl font-semibold">Tổng: {money(o.total_minor)}</p>
         </section>

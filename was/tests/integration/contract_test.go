@@ -54,8 +54,8 @@ func TestImplementedContractMatchesRouter(t *testing.T) {
 			}
 		}
 	}
-	if count != 50 {
-		t.Fatalf("expected50 implemented routes, got%d", count)
+	if count != 64 {
+		t.Fatalf("expected64 implemented routes, got%d", count)
 	}
 }
 

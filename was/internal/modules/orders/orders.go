@@ -9,6 +9,7 @@ import (
 	"unicode/utf8"
 
 	"ecommerce.local/base/internal/modules/cart"
+	"ecommerce.local/base/internal/modules/coupons"
 	"ecommerce.local/base/internal/modules/inventory"
 	"ecommerce.local/base/internal/modules/payments"
 	"ecommerce.local/base/internal/modules/users"
@@ -27,22 +28,23 @@ type Address struct {
 	Address   string `json:"address"`
 }
 type Order struct {
-	ID                  string           `json:"id"`
-	UserID              string           `json:"user_id"`
-	Status              string           `json:"status"`
-	Currency            string           `json:"currency"`
-	SubtotalMinor       int64            `json:"subtotal_minor"`
-	DiscountMinor       int64            `json:"discount_minor"`
-	ShippingMinor       int64            `json:"shipping_minor"`
-	TotalMinor          int64            `json:"total_minor"`
-	ShippingAddress     Address          `json:"shipping_address" gorm:"serializer:json;type:jsonb"`
-	Version             int64            `json:"version"`
-	CreatedAt           time.Time        `json:"created_at"`
-	UpdatedAt           time.Time        `json:"-"`
-	Items               []Item           `json:"items" gorm:"-"`
-	Payment             payments.Payment `json:"payment" gorm:"-"`
-	History             []History        `json:"history" gorm:"-"`
-	MockPaymentsEnabled bool             `json:"mock_payments_enabled" gorm:"-"`
+	CouponSnapshot      *coupons.Snapshot `json:"coupon_snapshot" gorm:"serializer:json;type:jsonb"`
+	ID                  string            `json:"id"`
+	UserID              string            `json:"user_id"`
+	Status              string            `json:"status"`
+	Currency            string            `json:"currency"`
+	SubtotalMinor       int64             `json:"subtotal_minor"`
+	DiscountMinor       int64             `json:"discount_minor"`
+	ShippingMinor       int64             `json:"shipping_minor"`
+	TotalMinor          int64             `json:"total_minor"`
+	ShippingAddress     Address           `json:"shipping_address" gorm:"serializer:json;type:jsonb"`
+	Version             int64             `json:"version"`
+	CreatedAt           time.Time         `json:"created_at"`
+	UpdatedAt           time.Time         `json:"-"`
+	Items               []Item            `json:"items" gorm:"-"`
+	Payment             payments.Payment  `json:"payment" gorm:"-"`
+	History             []History         `json:"history" gorm:"-"`
+	MockPaymentsEnabled bool              `json:"mock_payments_enabled" gorm:"-"`
 }
 type Item struct {
 	ID             string `json:"-"`
@@ -71,6 +73,7 @@ type History struct {
 func (History) TableName() string { return "order_status_history" }
 
 type CheckoutInput struct {
+	CouponCode    string `json:"coupon_code,omitempty"`
 	AddressID     string `json:"address_id"`
 	CartVersion   int64  `json:"cart_version"`
 	QuoteHash     string `json:"quote_hash"`
@@ -212,6 +215,7 @@ func (s *Service) Checkout(ctx context.Context, actor, key string, in CheckoutIn
 	if in.PaymentMethod == "Mock" && !s.MockEnabled {
 		return Order{}, problem.Invalid("Mock payments are disabled")
 	}
+	in.CouponCode = coupons.Normalize(in.CouponCode)
 	return idempotency.Run(ctx, s.DB, actor, "orders.checkout", key, in, false, func(tx *gorm.DB) (Order, error) {
 		var empty Order
 		var user users.User
@@ -240,7 +244,24 @@ func (s *Service) Checkout(ctx context.Context, actor, key string, in CheckoutIn
 		if e != nil {
 			return empty, e
 		}
-		if view.QuoteHash != in.QuoteHash {
+		var coupon coupons.Coupon
+		var snapshot *coupons.Snapshot
+		expectedHash := view.QuoteHash
+		if in.CouponCode != "" {
+			coupon, e = coupons.Find(tx, in.CouponCode, true)
+			if e != nil {
+				return empty, e
+			}
+			preview, applied, err := coupons.Apply(coupon, view.QuoteHash, view.Version, view.SubtotalMinor, view.ShippingMinor, time.Now().UTC())
+			if err != nil {
+				return empty, err
+			}
+			expectedHash = preview.QuoteHash
+			snapshot = &applied
+			view.DiscountMinor = preview.DiscountMinor
+			view.TotalMinor = preview.TotalMinor
+		}
+		if expectedHash != in.QuoteHash {
 			return empty, conflict("QUOTE_CHANGED", "Prices changed; review and confirm the current quote")
 		}
 		if !view.PricingValid {
@@ -255,7 +276,7 @@ func (s *Service) Checkout(ctx context.Context, actor, key string, in CheckoutIn
 		if e = tx.Where("id=? AND user_id=?", in.AddressID, actor).Take(&address).Error; e != nil {
 			return empty, e
 		}
-		o := Order{ID: uuid.NewString(), UserID: actor, Status: "Pending", Currency: "VND", SubtotalMinor: view.SubtotalMinor, ShippingMinor: view.ShippingMinor, TotalMinor: view.TotalMinor, Version: 1, ShippingAddress: Address{address.Recipient, address.Phone, address.Address}}
+		o := Order{ID: uuid.NewString(), UserID: actor, Status: "Pending", Currency: "VND", CouponSnapshot: snapshot, DiscountMinor: view.DiscountMinor, SubtotalMinor: view.SubtotalMinor, ShippingMinor: view.ShippingMinor, TotalMinor: view.TotalMinor, Version: 1, ShippingAddress: Address{address.Recipient, address.Phone, address.Address}}
 		if e = tx.Create(&o).Error; e != nil {
 			return empty, e
 		}
@@ -265,6 +286,11 @@ func (s *Service) Checkout(ctx context.Context, actor, key string, in CheckoutIn
 			}
 			snapshot := Item{ID: uuid.NewString(), OrderID: o.ID, ProductID: item.ProductID, SKU: item.SKU, Name: item.Name, ImageURL: item.ImageURL, Quantity: item.Quantity, UnitPriceMinor: item.UnitPriceMinor, LineTotalMinor: item.LineTotalMinor}
 			if e = tx.Create(&snapshot).Error; e != nil {
+				return empty, e
+			}
+		}
+		if snapshot != nil {
+			if e = coupons.Consume(tx, coupon, actor, o.ID, view.DiscountMinor); e != nil {
 				return empty, e
 			}
 		}
@@ -431,4 +457,23 @@ func (s *Service) Simulate(ctx context.Context, actor, attemptID, key, result, c
 		}
 		return s.load(tx, o.ID)
 	})
+}
+
+func (s *Service) PreviewCoupon(ctx context.Context, actor, code string, version int64) (coupons.Preview, error) {
+	view, e := cart.New(s.DB, s.MockEnabled).Get(ctx, actor)
+	if e != nil {
+		return coupons.Preview{}, e
+	}
+	if view.Version != version {
+		return coupons.Preview{}, conflict("CART_CHANGED", "Cart changed; review it before applying a coupon")
+	}
+	if len(view.Items) == 0 || !view.PricingValid {
+		return coupons.Preview{}, problem.Invalid("A valid nonempty cart is required")
+	}
+	coupon, e := coupons.Find(s.DB.WithContext(ctx), code, false)
+	if e != nil {
+		return coupons.Preview{}, e
+	}
+	preview, _, e := coupons.Apply(coupon, view.QuoteHash, view.Version, view.SubtotalMinor, view.ShippingMinor, time.Now().UTC())
+	return preview, e
 }

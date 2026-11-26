@@ -56,6 +56,16 @@ func run() int {
 			return 1
 		}
 	}
+	if os.Getenv("SEED_PHASE04_DATA") == "true" {
+		if !demo {
+			fmt.Fprintln(os.Stderr, "SEED_PHASE04_DATA requires SEED_DEMO_DATA=true")
+			return 1
+		}
+		if err := bootstrap.Phase04Demo(ctx, db, opts); err != nil {
+			fmt.Fprintln(os.Stderr, "Phase04 seed failed; ensure the demo cart is empty and fixture identifiers are unused")
+			return 1
+		}
+	}
 	fmt.Println("store settings seeded without overwriting existing data")
 	return 0
 }

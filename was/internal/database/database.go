@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-const SchemaVersion = 3
+const SchemaVersion = 4
 
 type StoreSettings struct {
 	ID               bool      `json:"-" gorm:"primaryKey"`
