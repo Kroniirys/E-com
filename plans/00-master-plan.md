@@ -3,7 +3,7 @@ title: "E-commerce Base — Plan tổng theo phase"
 artifact: implementation-plan
 role: fullstack
 status: draft
-version: 1.6
+version: 1.7
 owner: "datnguyen <dat01687241584@gmail.com>"
 approvers: []
 last_updated: 2026-11-26
@@ -157,7 +157,7 @@ Thứ tự: chốt nghiệp vụ → thiết kế và nền tảng → tài kho�
 
 ## 8. Trạng thái thực hiện (2026-11-26)
 
-Phase 01–03 đã hoàn thành mã nguồn, tài liệu và kiểm chứng native; Docker tạm hoãn theo yêu cầu chủ dự án. Phase 04 chưa bắt đầu. Xem [progress](../docs/PROGRESS.md), [review độc lập](../docs/review-phase-01.md) và [hướng dẫn chạy](../README.md). Không có ước lượng thời gian được bổ sung.
+Phase 01–04 đã hoàn thành mã nguồn, tài liệu và kiểm chứng native; Docker tạm hoãn theo yêu cầu chủ dự án. Phase 05 chưa bắt đầu. Xem [progress](../docs/PROGRESS.md), [review độc lập](../docs/review-phase-01.md) và [hướng dẫn chạy](../README.md). Không có ước lượng thời gian được bổ sung.
 
 ## 9. Quy ước cấu trúc mã nguồn
 

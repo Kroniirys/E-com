@@ -71,3 +71,7 @@ Checkout dùng user NO KEY UPDATE → cart → product và stock theo ID sau khi
 Viewer thêm cart/checkout/orders/admin orders và intent recovery trong sessionStorage theo user. Không persist token; request vẫn chịu auth epoch guard. Khi response không rõ kết quả, giữ key để kiểm tra lại cả sau reload. Khi quote thay đổi, tải lại và yêu cầu xác nhận mới.
 
 HTTP log có request/order/attempt/error code. Outbox log ghi event ID và correlation ở mức staged, không khẳng định transaction đã commit hoặc event đã publish. Nguồn chuẩn về event đã commit là outbox trong PostgreSQL; publisher và metrics thuộc Phase 05.
+
+## Phase 04
+
+Modules coupons/reviews/admin được wiring qua httpapi/engagement. Orders điều phối coupon row lock giữa product và stock, lưu snapshot/usage cùng transaction; không gọi mạng hoặc consumer. Review và dashboard đọc snapshot RepeatableRead. Dashboard sum là decimal string tới Viewer BigInt; owner quản lý review riêng ở tài khoản. Không phát thêm event coupon/review khi chưa có consumer.

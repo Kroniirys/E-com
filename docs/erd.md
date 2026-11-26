@@ -114,3 +114,9 @@ flowchart TD
 - order_status_history append-only ở service; terminal order không thể transition tiếp. payments unique/order; payment_attempts partial unique Pending/Paid; Failed attempt không được mở lại.
 - Checkout/release dùng inventory_transactions.reference=order UUID và reason riêng order.checkout/order.release. Row lock order cùng unique reference bảo vệ hoàn đúng một lần. Idempotency admin/customer tách operation.
 - outbox_events giữ payload/correlation/version và metadata relay chưa dùng. Down migration chỉ được kiểm chứng trên schema test riêng; không dùng để xóa dữ liệu giao dịch thật.
+
+## Schema v4 — Phase 04
+
+Migration000004 bổ sung coupons/coupon_usages/reviews, tổng24bảng ứng dụng. Coupon code unique upper/trim, version điều khoản và used_count tách biệt. Coupon usage unique/order. Orders thêm coupon_snapshot nullable và discount0..subtotal, giữ công thức total. Review unique user/product gồm bản soft-delete; FK order/user/product, rating1–5/content1–2000, metadata moderation.
+
+Index coupon created, review public/product/owner/admin, orders created và products created phục vụ danh sách/dashboard. Rollback4 bị chặn nếu có coupon snapshot/usage hoặc review, tránh xóa audit/giao dịch; dữ liệu thật cần migration sửa tiến. Không tạo thêm event coupon/review khi chưa có consumer.

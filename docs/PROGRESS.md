@@ -128,3 +128,20 @@ E2E Phase03 bỏ response sau route.fetch đã tạo đơn, reload cart rỗng r
 Outbox chỉ ghi bền và chưa publish; không có notification. Mock chỉ local/test, không payment gateway. Chi tiết [review](review-phase-03.md), [checklist](phase-03-execution.md), [hạn chế](known-issues.md).
 
 Tổng hợp kiểm chứng Phase03: [verification.json](evidence/phase-03/verification.json). Sau các lượt chạy, [kiểm tra cleanup](evidence/phase-03/cleanup.txt) xác nhận không còn schema test riêng. Metadata OpenAPI cuối (0.3.0 và nhãn Phase03 đã hiện thực) được [validate/generate/kiểm tra embed](evidence/phase-03/contract-final.txt) lại.
+
+## Phase 04 — Coupon, review và dashboard (2026-11-26)
+
+Hoàn thành P04-01–06 theo [plan](../plans/04-coupons-reviews-admin-plan.md), schema4 với24bảng ứng dụng. Coupon fixed/percentage, preview không giữ lượt; checkout kiểm lại terms/expiry/limit và commit usage/snapshot/stock/order/outbox cùng transaction. Hủy không hoàn lượt. Review chỉ từ Delivered, unique cả soft-delete, public count/average cùng visibility snapshot. Dashboard [from,to) theo IANA timezone, ngày tạo đơn, tổng Delivered+Paid decimal string chính xác.
+
+| Kiểm chứng | Kết quả | Evidence |
+| --- | --- | --- |
+| Go unit/race và vet | Đạt16unit; vet exit0 | [race](evidence/phase-04/go-race.txt), [vet](evidence/phase-04/go-vet.txt) |
+| Go static build | Đạt5binary | [log](evidence/phase-04/build-go.txt) |
+| PostgreSQL/Redis integration | Đạt31test | [log](evidence/phase-04/integration.txt) |
+| Viewer/contract | Đạt13unit, OpenAPI/generation/lint/typecheck/build/format | [log](evidence/phase-04/viewer-check.txt) |
+| Chrome E2E | Đạt4spec gồm hồi quy Phase01–03 và coupon→checkout→Delivered→review→moderation→dashboard | [log](evidence/phase-04/e2e.txt), [dashboard](evidence/phase-04/dashboard.png) |
+| Docker | Tạm hoãn theo yêu cầu | Không chạy, không báo pass |
+
+Integration bổ sung:20buyer tranh3lượt coupon, chỉ3order/usage; cancel/replay không thay used_count; fault outbox rollback usage/stock; review đồng thời chỉ1bản, xóa mềm không cho tạo lại; hidden review không vào public aggregate; dashboard loại Pending/Cancelled/Delivered-unpaid và tổng9000000031000 vượt trần một order. Persist record/hash4-field ở schema3 trước nâng cấp rồi replay bằng schema4 không đổi ID/tiền. Rollback4 từ chối xóa review/audit. Seed opt-in tạo Delivered/review qua service và chạy2lần không nhân bản.
+
+Phase03 đã push/merge develop tại12ec68d, gồm9f6cec9 (code) và7b44028 (docs). Phase04 ở branch local feat/phase-04-coupons-reviews-admin, chưa commit/push. [Review độc lập](review-phase-04.md); evidence các phase cũ giữ nguyên. Phase05 chưa bắt đầu.
