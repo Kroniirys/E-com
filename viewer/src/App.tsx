@@ -6,6 +6,8 @@ import { useSession } from './session'
 import { useRoute } from './hooks'
 import { Failure, Loading } from './ui'
 import AccountPage from './pages/AccountPage'
+import CartPage from './pages/CartPage'
+import OrdersPage from './pages/OrdersPage'
 import AdminPage from './pages/AdminPage'
 import AuthPage from './pages/AuthPage'
 import CatalogPage from './pages/CatalogPage'
@@ -26,8 +28,9 @@ function Workspace() {
   const logout = async () => {
     setError('')
     try {
+      const before = window.location.hash
       await session.logout()
-      window.location.hash = '/'
+      if (window.location.hash === before) window.location.hash = '/'
     } catch (error) {
       setError(errorMessage(error))
     }
@@ -39,7 +42,13 @@ function Workspace() {
     content = <AuthPage key={route} register={route === '/register'} />
   else if (route.startsWith('/products/'))
     content = <ProductPage key={route} id={route.slice('/products/'.length)} />
-  else if (route === '/account' || route.startsWith('/admin/')) {
+  else if (
+    route === '/account' ||
+    route === '/cart' ||
+    route === '/orders' ||
+    route.startsWith('/orders/') ||
+    route.startsWith('/admin/')
+  ) {
     if (!session.ready)
       content = (
         <main className="page">
@@ -65,6 +74,16 @@ function Workspace() {
         </main>
       )
     else if (route === '/account') content = <AccountPage key={session.user.id} />
+    else if (route === '/cart') content = <CartPage key={session.user.id} />
+    else if (route === '/orders' || route.startsWith('/orders/'))
+      content = (
+        <main className="page">
+          <OrdersPage
+            key={`${route}-${session.user.id}`}
+            id={route === '/orders' ? undefined : route.slice('/orders/'.length)}
+          />
+        </main>
+      )
     else
       content = (
         <AdminPage key={`${route}-${session.user.id}`} tab={route.slice('/admin/'.length)} />
@@ -103,6 +122,12 @@ function Workspace() {
             </a>
             {session.user ? (
               <>
+                <a href="#/cart" className="hover:underline">
+                  Giỏ hàng
+                </a>
+                <a href="#/orders" className="hover:underline">
+                  Đơn hàng
+                </a>
                 <a href="#/account" className="hover:underline">
                   Tài khoản
                 </a>
@@ -141,7 +166,7 @@ function Workspace() {
       )}
       {content}
       <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-[#dae1d4] px-6 py-7 text-xs text-[#68796f] lg:px-10">
-        <span>E-commerce Base · Phase 02</span>
+        <span>E-commerce Base · Phase 03</span>
         <a className="underline" href="/api-docs/index.html">
           Tài liệu API ↗
         </a>

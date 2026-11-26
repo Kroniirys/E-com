@@ -9,12 +9,12 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-
 	"ecommerce.local/base/api"
 	"ecommerce.local/base/internal/config"
 	"ecommerce.local/base/internal/database"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 var validRequestID = regexp.MustCompile(`^[A-Za-z0-9_-]{1,64}$`)
@@ -67,7 +67,7 @@ func router(cfg config.Config, deps dependencies, log *slog.Logger, registration
 			if path == "" {
 				path = "unmatched"
 			}
-			log.Info("http request", "request_id", id, "method", c.Request.Method, "route", path, "status", c.Writer.Status(), "duration_ms", time.Since(start).Milliseconds())
+			log.Info("http request", "request_id", id, "method", c.Request.Method, "route", path, "status", c.Writer.Status(), "order_id", c.GetString("order_id"), "attempt_id", c.GetString("attempt_id"), "error_code", c.GetString("error_code"), "duration_ms", time.Since(start).Milliseconds())
 		}()
 		c.Next()
 	})

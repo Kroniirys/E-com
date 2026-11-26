@@ -51,7 +51,7 @@ export default function CatalogPage() {
               Khám phá sản phẩm
             </h2>
           </div>
-          <span className="text-sm text-stone-500">Chưa mở đặt hàng trong phase này</span>
+          <span className="text-sm text-stone-500">Chọn sản phẩm để thêm vào giỏ hàng</span>
         </div>
         <div className="mb-6 grid gap-4 rounded-2xl border border-stone-200 bg-white p-4 md:grid-cols-[1.5fr_1fr_1fr]">
           <form onSubmit={search} className="flex items-end gap-2">

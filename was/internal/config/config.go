@@ -28,7 +28,7 @@ func Load(get func(string) string) (Config, error) {
 		}
 		return fallback
 	}
-	c := Config{Environment: value("APP_ENV", "development"), HTTPAddr: value("HTTP_ADDR", ":8080"), Version: value("APP_VERSION", "phase01"), DatabaseURL: get("DATABASE_URL")}
+	c := Config{Environment: value("APP_ENV", "development"), HTTPAddr: value("HTTP_ADDR", ":8080"), Version: value("APP_VERSION", "phase03"), DatabaseURL: get("DATABASE_URL")}
 	if c.Environment != "development" && c.Environment != "test" && c.Environment != "production" {
 		return c, errors.New("APP_ENV must be development, test or production")
 	}

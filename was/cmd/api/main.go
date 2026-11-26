@@ -13,8 +13,10 @@ import (
 	"ecommerce.local/base/internal/httpapi"
 	"ecommerce.local/base/internal/httpserver"
 	"ecommerce.local/base/internal/modules/auth"
+	"ecommerce.local/base/internal/modules/cart"
 	"ecommerce.local/base/internal/modules/catalog"
 	"ecommerce.local/base/internal/modules/inventory"
+	"ecommerce.local/base/internal/modules/orders"
 	"ecommerce.local/base/internal/modules/users"
 	"ecommerce.local/base/internal/platform/limit"
 	appRuntime "ecommerce.local/base/internal/runtime"
@@ -24,6 +26,7 @@ func main() { os.Exit(run()) }
 
 func run() int {
 	log := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(log)
 	cfg, err := config.Load(os.Getenv)
 	if err != nil {
 		log.Error("configuration rejected", "error", err.Error())
@@ -56,7 +59,7 @@ func run() int {
 		log.Error("authentication initialization failed")
 		return 1
 	}
-	endpoints := &httpapi.API{Auth: authService, Users: users.New(db), Catalog: catalog.New(db), Inventory: inventory.New(db), Origins: cfg.AllowedOrigins, SecureCookie: security.SecureCookie}
+	endpoints := &httpapi.API{Cart: cart.New(db, security.MockPayments), Orders: orders.New(db, security.MockPayments), Auth: authService, Users: users.New(db), Catalog: catalog.New(db), Inventory: inventory.New(db), Origins: cfg.AllowedOrigins, SecureCookie: security.SecureCookie}
 	server := httpserver.New(cfg, db, log, endpoints.Register)
 	listener, err := net.Listen("tcp", cfg.HTTPAddr)
 	if err != nil {

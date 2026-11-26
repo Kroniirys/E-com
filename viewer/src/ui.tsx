@@ -117,6 +117,10 @@ export function Status({ value }: { value: string }) {
     Inactive: 'Ngừng bán',
     Admin: 'Quản trị viên',
     Customer: 'Khách hàng',
+    PaymentPending: 'Chưa thanh toán',
+    Paid: 'Đã thanh toán',
+    Failed: 'Thất bại',
+    Cancelled: 'Đã hủy',
   }
   return (
     <span

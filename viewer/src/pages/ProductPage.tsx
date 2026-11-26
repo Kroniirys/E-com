@@ -1,10 +1,16 @@
-import { money } from '../api'
+import { useState } from 'react'
+import { money, errorMessage } from '../api'
+import { useSession } from '../session'
 import type { Product } from '../api'
 import { useCategoryOptions, useLoad } from '../hooks'
-import { Failure, Loading } from '../ui'
+import { Failure, Field, Loading, Notice } from '../ui'
 export default function ProductPage({ id }: { id: string }) {
   const state = useLoad<Product>(`/api/v1/products/${encodeURIComponent(id)}`, false)
   const categories = useCategoryOptions()
+  const { api, user } = useSession()
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const [added, setAdded] = useState(false)
   if (state.loading)
     return (
       <main className="page">
@@ -80,9 +86,60 @@ export default function ProductPage({ id }: { id: string }) {
                 </span>
               ))}
           </div>
-          <p className="mt-8 border-t border-stone-200 pt-5 text-sm text-stone-500">
-            Chức năng giỏ hàng và đặt hàng sẽ được mở trong Phase 03.
-          </p>
+          <div className="mt-8 border-t border-stone-200 pt-5">
+            {error && <Failure message={error} />}
+            {added && (
+              <Notice>
+                Đã thêm vào giỏ hàng.{' '}
+                <a href="#/cart" className="underline">
+                  Xem giỏ hàng
+                </a>
+              </Notice>
+            )}
+            {user ? (
+              <form
+                className="mt-4 flex flex-wrap items-end gap-3"
+                onSubmit={async (e) => {
+                  e.preventDefault()
+                  const quantity = Number(new FormData(e.currentTarget).get('quantity'))
+                  setBusy(true)
+                  setError('')
+                  setAdded(false)
+                  try {
+                    await api.request('POST', '/api/v1/cart/items', {
+                      product_id: product.id,
+                      quantity,
+                    })
+                    setAdded(true)
+                  } catch (error) {
+                    setError(errorMessage(error))
+                  } finally {
+                    setBusy(false)
+                  }
+                }}
+              >
+                <Field label="Số lượng mua">
+                  <input
+                    name="quantity"
+                    type="number"
+                    className="input !w-24"
+                    defaultValue={1}
+                    min={1}
+                    max={Math.min(1000, product.stock)}
+                    required
+                    disabled={busy || product.out_of_stock}
+                  />
+                </Field>
+                <button className="button-primary" disabled={busy || product.out_of_stock}>
+                  {busy ? 'Đang thêm…' : 'Thêm vào giỏ hàng'}
+                </button>
+              </form>
+            ) : (
+              <a href="#/login" className="button-primary inline-block">
+                Đăng nhập để mua hàng
+              </a>
+            )}
+          </div>
         </section>
       </div>
     </main>

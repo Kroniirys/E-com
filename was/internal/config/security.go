@@ -4,9 +4,11 @@ import (
 	"errors"
 	"net/url"
 	"regexp"
+	"strconv"
 )
 
 type Security struct {
+	MockPayments bool
 	Secret       string
 	RedisURL     string
 	RatePrefix   string
@@ -15,6 +17,17 @@ type Security struct {
 
 func LoadSecurity(get func(string) string, environment string) (Security, error) {
 	c := Security{Secret: get("AUTH_JWT_SECRET"), RedisURL: get("REDIS_URL"), RatePrefix: get("RATE_LIMIT_PREFIX"), SecureCookie: environment == "production"}
+	c.MockPayments = environment == "development" || environment == "test"
+	if raw := get("MOCK_PAYMENTS_ENABLED"); raw != "" {
+		value, err := strconv.ParseBool(raw)
+		if err != nil {
+			return c, errors.New("MOCK_PAYMENTS_ENABLED must be a boolean")
+		}
+		c.MockPayments = value
+	}
+	if environment == "production" && c.MockPayments {
+		return c, errors.New("mock payments are not allowed in production")
+	}
 	if len(c.Secret) < 32 {
 		return c, errors.New("AUTH_JWT_SECRET must contain at least 32 bytes")
 	}

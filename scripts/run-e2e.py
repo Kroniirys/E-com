@@ -3,6 +3,7 @@ import json
 import os
 import secrets
 import subprocess
+import sys
 import time
 import urllib.request
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
@@ -16,12 +17,21 @@ if parsed.scheme not in {"postgres", "postgresql"} or not parsed.path.endswith("
     raise SystemExit("TEST_DATABASE_URL must name an isolated *_test PostgreSQL database.")
 redis_url = os.environ.get("TEST_REDIS_URL", "")
 if urlparse(redis_url).scheme not in {"redis", "rediss"}:
-    raise SystemExit("TEST_REDIS_URL is required for Phase 02 E2E.")
+    raise SystemExit("TEST_REDIS_URL is required for E2E.")
+specs = sorted("e2e/" + p.name for p in (root / "viewer/e2e").glob("*.spec.ts"))
+selected = os.environ.get("E2E_SPEC")
+if selected is None:
+    for spec in specs:
+        print("Running isolated E2E spec: " + spec, flush=True)
+        subprocess.run([sys.executable, str(Path(__file__).resolve())], env={**os.environ, "E2E_SPEC": spec}, check=True)
+    raise SystemExit(0)
+if selected not in specs:
+    raise SystemExit("E2E_SPEC must name an existing e2e/*.spec.ts file")
 version = "e2e-" + uuid.uuid4().hex
 port = os.environ.get("E2E_API_PORT", "18080")
-logdir = (root / os.environ.get("E2E_EVIDENCE_DIR", "docs/evidence/phase-02")).resolve()
+logdir = (root / os.environ.get("E2E_EVIDENCE_DIR", "docs/evidence/phase-03")).resolve()
 logdir.mkdir(parents=True, exist_ok=True)
-base_env = {**os.environ, "APP_ENV": "test", "GIN_MODE": "release"}
+base_env = {**os.environ, "APP_ENV": "test", "GIN_MODE": "release", "MOCK_PAYMENTS_ENABLED": "true"}
 created = subprocess.run([str(root/"was/bin/testscope"), "create"], env=base_env, check=True, capture_output=True, text=True)
 schema = created.stdout.strip()
 query = parse_qs(parsed.query)
@@ -38,12 +48,12 @@ api = None
 try:
     subprocess.run([str(root/"was/bin/migrate"), "up"], env=env, check=True, cwd=root)
     subprocess.run([str(root/"was/bin/seed")], env=env, check=True, cwd=root)
-    with (logdir/"e2e-api.log").open("w") as log:
+    with (logdir/(Path(selected).stem + "-api.log")).open("w") as log:
         api = subprocess.Popen([str(root/"was/bin/api")], env=env, cwd=root, stdout=log, stderr=log)
         deadline = time.monotonic() + 20
         while time.monotonic() < deadline:
             if api.poll() is not None:
-                raise SystemExit(f"E2E API exited; inspect {logdir / 'e2e-api.log'}")
+                raise SystemExit(f"E2E API exited; inspect API log in {logdir}")
             try:
                 with urllib.request.urlopen("http://127.0.0.1:" + port + "/api/v1/foundation", timeout=1) as response:
                     if json.load(response)["data"]["version"] == version:
@@ -53,7 +63,7 @@ try:
             time.sleep(0.1)
         else:
             raise SystemExit("E2E API did not become ready")
-        subprocess.run(["npm", "run", "test:e2e"], env=env, cwd=root/"viewer", check=True)
+        subprocess.run(["npm", "run", "test:e2e", "--", selected], env=env, cwd=root/"viewer", check=True)
 finally:
     if api is not None:
         api.terminate()

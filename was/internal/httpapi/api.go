@@ -12,14 +12,19 @@ import (
 	"unicode/utf8"
 
 	"ecommerce.local/base/internal/modules/auth"
+	"ecommerce.local/base/internal/modules/cart"
 	"ecommerce.local/base/internal/modules/catalog"
 	"ecommerce.local/base/internal/modules/inventory"
+	"ecommerce.local/base/internal/modules/orders"
 	"ecommerce.local/base/internal/modules/users"
 	"ecommerce.local/base/internal/platform/problem"
+
 	"github.com/gin-gonic/gin"
 )
 
 type API struct {
+	Cart         *cart.Service
+	Orders       *orders.Service
 	Auth         *auth.Service
 	Users        *users.Service
 	Catalog      *catalog.Service
@@ -30,6 +35,7 @@ type API struct {
 
 func fail(c *gin.Context, err error) {
 	p := problem.Normalize(err)
+	c.Set("error_code", p.Code)
 	if p.RetryAfter > 0 {
 		c.Header("Retry-After", strconv.Itoa(p.RetryAfter))
 	}
@@ -155,6 +161,9 @@ func (a *API) require(admin bool) gin.HandlerFunc {
 	}
 }
 func (a *API) Register(r *gin.Engine) {
+	if a.Cart != nil && a.Orders != nil {
+		a.commerce(r)
+	}
 	v := r.Group("/api/v1")
 	v.POST("/auth/register", func(c *gin.Context) {
 		if !a.origin(c) || !a.rate(c, "register-ip", 5) {

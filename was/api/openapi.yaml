@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "E-commerce Base API",
-    "version": "0.2.0",
-    "description": "Phase 01–02 đã triển khai: foundation, tài khoản, catalog và inventory. Các endpoint Phase 03–05 vẫn là contract dự kiến."
+    "version": "0.3.0",
+    "description": "Phase 01–03 đã triển khai: foundation, tài khoản, catalog, inventory, cart, orders và COD/mock payment. Các endpoint Phase 04–05 vẫn là contract dự kiến."
   },
   "servers": [
     {
@@ -22,7 +22,7 @@
     },
     {
       "name": "Phase 03",
-      "description": "Contract dự kiến, chưa triển khai"
+      "description": "Cart, checkout, orders và COD/mock payment đã triển khai; mock chỉ bật local/test"
     },
     {
       "name": "Phase 04",
@@ -4659,12 +4659,12 @@
       "get": {
         "operationId": "get_api_v1_cart",
         "summary": "Giỏ hàng",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -4766,12 +4766,12 @@
       "delete": {
         "operationId": "delete_api_v1_cart",
         "summary": "Xóa giỏ",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -4859,12 +4859,12 @@
       "post": {
         "operationId": "post_api_v1_cart_items",
         "summary": "Thêm item",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -4978,12 +4978,12 @@
       "put": {
         "operationId": "put_api_v1_cart_items_id",
         "summary": "Sửa quantity",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -5106,12 +5106,12 @@
       "delete": {
         "operationId": "delete_api_v1_cart_items_id",
         "summary": "Xóa item",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -5210,12 +5210,12 @@
       "post": {
         "operationId": "post_api_v1_orders",
         "summary": "Checkout",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -5340,12 +5340,12 @@
       "get": {
         "operationId": "get_api_v1_orders",
         "summary": "Lịch sử đơn",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -5499,12 +5499,12 @@
       "get": {
         "operationId": "get_api_v1_orders_id",
         "summary": "Chi tiết đơn",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -5619,12 +5619,12 @@
       "post": {
         "operationId": "post_api_v1_orders_id_cancel",
         "summary": "Hủy đơn",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -5750,12 +5750,12 @@
       "get": {
         "operationId": "get_api_v1_admin_orders",
         "summary": "Quản trị đơn",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: admin. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: admin. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "admin",
         "security": [
           {
@@ -5909,12 +5909,12 @@
       "patch": {
         "operationId": "patch_api_v1_admin_orders_id_status",
         "summary": "Chuyển trạng thái",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: admin. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: admin. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "admin",
         "security": [
           {
@@ -6050,12 +6050,12 @@
       "post": {
         "operationId": "post_api_v1_orders_id_payment_attempts",
         "summary": "Tạo mock attempt",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu. Route chỉ đăng ký khi MOCK_PAYMENTS_ENABLED=true; không được bật production.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -6181,12 +6181,12 @@
       "post": {
         "operationId": "post_api_v1_payment_attempts_id_simulate",
         "summary": "Mô phỏng kết quả, chỉ local/demo",
-        "description": "CHƯA TRIỂN KHAI: Phase 03. Quyền: customer. Endpoint chỉ là contract, hiện trả 404.",
+        "description": "Đã triển khai Phase 03. Quyền: customer. Mutation có Idempotency-Key lưu kết quả cùng transaction khi contract yêu cầu. Route chỉ đăng ký khi MOCK_PAYMENTS_ENABLED=true; không được bật production.",
         "tags": [
           "Phase 03"
         ],
         "x-phase": 3,
-        "x-implemented": false,
+        "x-implemented": true,
         "x-required-role": "customer",
         "security": [
           {
@@ -8033,6 +8033,126 @@
           }
         ]
       }
+    },
+    "/api/v1/admin/orders/{id}": {
+      "get": {
+        "operationId": "get_api_v1_admin_orders_id",
+        "summary": "Chi tiết đơn quản trị",
+        "description": "Đã triển khai Phase 03. Quyền Admin; gồm snapshot/history/payment/attempts.",
+        "tags": [
+          "Phase 03"
+        ],
+        "x-phase": 3,
+        "x-implemented": true,
+        "x-required-role": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Order"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Đầu vào không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Chưa xác thực",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không có quyền",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tồn tại hoặc chưa triển khai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Xung đột trạng thái/stock/version/key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Vượt giới hạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependency chưa sẵn sàng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -8408,6 +8528,28 @@
             "format": "int64",
             "minimum": 0,
             "maximum": 9000000000000
+          },
+          "name": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "product_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "stock": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "maximum": 9000000000000
+          },
+          "available": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -8415,7 +8557,13 @@
           "product_id",
           "quantity",
           "unit_price_minor",
-          "line_total_minor"
+          "line_total_minor",
+          "name",
+          "sku",
+          "image_url",
+          "product_version",
+          "stock",
+          "available"
         ],
         "additionalProperties": false
       },
@@ -8426,7 +8574,9 @@
             "type": "integer"
           },
           "quote_hash": {
-            "type": "string"
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
           },
           "items": {
             "type": "array",
@@ -8457,6 +8607,12 @@
             "format": "int64",
             "minimum": 0,
             "maximum": 9000000000000
+          },
+          "pricing_valid": {
+            "type": "boolean"
+          },
+          "mock_payments_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -8466,9 +8622,12 @@
           "subtotal_minor",
           "discount_minor",
           "shipping_minor",
-          "total_minor"
+          "total_minor",
+          "pricing_valid",
+          "mock_payments_enabled"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Live quote, không giữ hàng. pricing_valid=false cho phép xóa item nhưng không checkout. SHA-256 gồm cart/version, ID/version/price/quantity và currency/shipping; server tính lại trước commit."
       },
       "Order": {
         "type": "object",
@@ -8520,7 +8679,7 @@
             "maximum": 9000000000000
           },
           "shipping_address": {
-            "$ref": "#/components/schemas/Address"
+            "$ref": "#/components/schemas/ShippingAddressSnapshot"
           },
           "items": {
             "type": "array",
@@ -8552,6 +8711,9 @@
                   "format": "int64",
                   "minimum": 0,
                   "maximum": 9000000000000
+                },
+                "image_url": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -8560,7 +8722,8 @@
                 "name",
                 "quantity",
                 "unit_price_minor",
-                "line_total_minor"
+                "line_total_minor",
+                "image_url"
               ],
               "additionalProperties": false
             }
@@ -8571,6 +8734,23 @@
           "created_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderHistory"
+            }
+          },
+          "mock_payments_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -8584,7 +8764,11 @@
           "shipping_address",
           "items",
           "payment",
-          "created_at"
+          "created_at",
+          "user_id",
+          "version",
+          "history",
+          "mock_payments_enabled"
         ],
         "additionalProperties": false
       },
@@ -8619,6 +8803,12 @@
             "format": "int64",
             "minimum": 0,
             "maximum": 9000000000000
+          },
+          "attempts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentAttempt"
+            }
           }
         },
         "required": [
@@ -8626,7 +8816,8 @@
           "order_id",
           "method",
           "status",
-          "amount_minor"
+          "amount_minor",
+          "attempts"
         ],
         "additionalProperties": false
       },
@@ -8652,13 +8843,18 @@
           },
           "failure_code": {
             "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
           "payment_id",
           "status",
-          "failure_code"
+          "failure_code",
+          "created_at"
         ],
         "additionalProperties": false
       },
@@ -9214,7 +9410,10 @@
             "minimum": 1
           },
           "quote_hash": {
-            "type": "string"
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64,
+            "pattern": "^[a-f0-9]{64}$"
           },
           "payment_method": {
             "type": "string",
@@ -9222,10 +9421,6 @@
               "COD",
               "Mock"
             ]
-          },
-          "coupon_code": {
-            "type": "string",
-            "maxLength": 64
           }
         },
         "required": [
@@ -9246,7 +9441,8 @@
               "Processing",
               "Shipped",
               "Delivered",
-              "Failed"
+              "Failed",
+              "Cancelled"
             ]
           },
           "reason": {
@@ -9488,6 +9684,61 @@
           "role",
           "status",
           "password"
+        ],
+        "additionalProperties": false
+      },
+      "ShippingAddressSnapshot": {
+        "type": "object",
+        "properties": {
+          "recipient": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "recipient",
+          "phone",
+          "address"
+        ],
+        "additionalProperties": false
+      },
+      "OrderHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actor_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "from_status": {
+            "type": "string"
+          },
+          "to_status": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "actor_id",
+          "from_status",
+          "to_status",
+          "reason",
+          "created_at"
         ],
         "additionalProperties": false
       }
